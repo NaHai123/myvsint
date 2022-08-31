@@ -11,6 +11,9 @@ import BaiduMap from "vue-baidu-map";
 Vue.use(BaiduMap, {
   ak: "WkQm52ps4kw23O9DuEI0PqRdhKOja8zM"
 });
+// 引入axios实现全局注册
+import axios from 'axios'
+Vue.prototype.$http = axios
 //Vue.use( BaiduMap, { ak : 'WkQm52ps4kw23O9DuEI0PqRdhKOja8zM' } )
 
 Vue.config.productionTip = false;

@@ -10,38 +10,14 @@
 </template>
 <script>
 export default {
-  name: 'app',
+  name: 'HelloWorld',
   data () {
     return {
-      points: [],     //存放经纬度坐标
-      backdata:[],    //存放后端数据
+      points: []
     }
   },
-    created(){
-     this.init();
-  },
   methods: {
-        //读取后端数据，本版本只接收后端一个经纬度。 //存在问题：接收后端数据需刷新两次页面！！！
-        init(){
-            this.$http.post("http://127.0.0.1:8000/model/",
-           {'uid':0},
-           {
-              headers:{'Content-Type':'application/json'},
-              emulateJSON:true
-           }).then(
-              success=>{
-                 //this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                 sessionStorage.setItem("success",success.data)  //存在问题：接收后端数据需刷新两次页面
-              }
-                  );
-                  //后端数据添加进points
-                  this.backdata=sessionStorage.getItem("success")
-                  this.backdata=JSON.parse(this.backdata)
-                  let position = new BMap.Point(this.backdata.sites[0],this.backdata.sites[1])
-                  this.points.push(position)
-     },
-     //生成百度地图，并在地图上标记points中的坐标
-    map(){
+    map () {
       let map = new window.BMap.Map(this.$refs.allmap) // 创建Map实例
       map.centerAndZoom(new window.BMap.Point(116.404, 39.915), 15) // 初始化地图,设置中心点坐标和地图级别
       map.addControl(new window.BMap.MapTypeControl({ // 添加地图类型控件
@@ -55,7 +31,7 @@ export default {
       //新增代码
       function showPoly(pointList) {
         //循环显示点对象
-        for (let c = 0; c < pointList.length; c++) {
+        for (var c = 0; c < pointList.length; c++) {
           var marker = new BMap.Marker(pointList[c]);
           //将途经点按顺序添加到地图上
           map.addOverlay(marker);
@@ -64,8 +40,15 @@ export default {
           //marker.setLabel(label);
         }
     }
+        //随机生成100个坐标点
+        for (var i = 0; i < 100; i++) {
+        var position = new BMap.Point(116+(Math.random() * 40 + 85)%1, 39+(Math.random() * 30 + 21)%1);
+        this.points.push(position)
+      }
       //标点
       showPoly(this.points);
+
+
   },
   },
 mounted () {
