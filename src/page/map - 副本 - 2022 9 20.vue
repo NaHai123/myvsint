@@ -6,9 +6,7 @@
       style="position:absolute;height:100%;width:83.5%;"
     ></div>
     <router-view></router-view>
-          <div style="position:absolute;z-index:2;margin-left:12px;margin-top:40%;width:82%;">
-            真实雷电数据日期时间：{{this.period[this.periodID]}},
-            预测雷电数据日期时间：{{this.predictPeriod[this.predictPeriodID]}}
+          <div style="position:absolute;z-index:2;margin-left:12px;margin-top:43%;width:82%;">
             <el-progress :text-inside="true" :stroke-width="30" :percentage="percent" />
           </div>
 
@@ -44,7 +42,6 @@ export default {
         script.src = "http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"
         document.body.appendChild(script)
     },
-     //接收预测数据，描绘热力图
      predictANDheatmap(map) {
     /*
 	var mapStyle = {
@@ -65,15 +62,14 @@ export default {
            }).then(
               success=>{
                  //this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                 sessionStorage.setItem("predictSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
+                 sessionStorage.setItem("success",success.data)  //存在问题：接收后端数据需刷新两次页面
               }
                   );
                   //后端数据添加进points
-                  this.predictBackdata = sessionStorage.getItem("predictSuccess")
+                  this.predictBackdata = sessionStorage.getItem("success")
                   this.predictBackdata = JSON.parse(this.predictBackdata)
                   console.log(111111111111111111111111)
-                  console.log("predictPeriodID"+" "+this.predictPeriodID)
-
+                  console.log(this.predictPoints)
                  for (let c = 0; c < this.predictBackdata.length; c++) {
                   let a = {"lng":this.predictBackdata[c][0],"lat":this.predictBackdata[c][1],"count":50+Math.random()*100}
                   this.predictPoints.push(a)
@@ -101,7 +97,7 @@ export default {
       position : labelPoint,    // 指定文本标注所在的地理位置
       offset   : new BMap.Size(30, -30)    //设置文本偏移量
     };
-        let label = new BMap.Label("预测雷电数据日期时间："+this.predictPeriod[this.predictPeriodID], opts);  // 创建文本标注对象
+        let label = new BMap.Label("预测雷电数据日期时间："+this.predictPeriod[this.predictPeriodID].toString(), opts);  // 创建文本标注对象
         label.setStyle({
              color : "red",
              fontSize : "12px",
@@ -192,8 +188,7 @@ export default {
         //读取后端数据，本版本只接收后端一个经纬度。 //存在问题：接收后端数据需刷新两次页面！！！
         init(){
             this.periodID = (this.periodID+1)%12
-            console.log("periodID"+" "+this.periodID);
-            this.percent = Number((100*(this.periodID)/11).toFixed(2))   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数
+            this.percent = (100*(this.periodID)/11).toFixed(2)   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数
             this.$http.post("http://127.0.0.1:8000/model1/",
            {'uid':0,     //0表示取真实数据，1表示取预测数据
             'period':this.period[this.periodID]    //指示后端读取时间段202007111600的npy文件 ykcs
@@ -231,11 +226,11 @@ export default {
       map.enableScrollWheelZoom(true)// 开启鼠标滚轮缩放
       //新增代码
       //标点
-
+      this.showPoly(this.points,map);
             if (this.timer){
           clearInterval(this.timer);
   }else {
-       this.timer = setInterval( ()=>{map.clearOverlays();this.backdata=[];this.points=[];this.init();this.showPoly(this.points,map);this.addZoomControl(map);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(map);},5000 );  //5000ms刷新一次
+       this.timer = setInterval( ()=>{map.clearOverlays();this.points=[];this.init();console.log(this.points);this.showPoly(this.points,map);this.addZoomControl(map);this.predictPoints=[];this.predictANDheatmap(map);},5000 );  //5000ms刷新一次
   }
   }
  },
@@ -248,7 +243,7 @@ mounted () {
        this.timer = setInterval( ()=>{this.init();this.showPoly(this.points,this.map);},5000 );  //5000ms刷新一次
   }
    */
-   this.map();
+   this.init();this.map();
 },
 
 destroyed () {
