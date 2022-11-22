@@ -2,27 +2,45 @@
     <div>
         <head-top></head-top>
 		<section class="data_section">
-			<header class="section_title">数据统计</header>
+			<header class="section_title">服务器数据概览</header>
+			<el-col :span="4"><div class="data_list today_head"><span class="data_num head">资源情况：</span></div></el-col>
+			<br><br>
 			<el-row :gutter="20" style="margin-bottom: 10px;">
-                <el-col :span="4"><div class="data_list today_head"><span class="data_num head">当日数据：</span></div></el-col>
-				<el-col :span="4"><div class="data_list"><span class="data_num">{{userCount}}</span> 新增用户</div></el-col>
-				<el-col :span="4"><div class="data_list"><span class="data_num">{{orderCount}}</span> 新增订单</div></el-col>
-                <el-col :span="4"><div class="data_list"><span class="data_num">{{adminCount}}</span> 新增管理员</div></el-col>
+                <el-col :span="4"><div style="margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">GPU1：</span></div></el-col>
+				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         已用内存<span class="data_num">1000MB</span></div></el-col>
+				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         剩余内存<span class="data_num">200MB</span></div></el-col>
+				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         总内存<span class="data_num">1200MB</span></div></el-col>
 			</el-row>
             <el-row :gutter="20">
-                <el-col :span="4"><div class="data_list all_head"><span class="data_num head">总数据：</span></div></el-col>
-                <el-col :span="4"><div class="data_list"><span class="data_num">{{allUserCount}}</span> 注册用户</div></el-col>
-                <el-col :span="4"><div class="data_list"><span class="data_num">{{allOrderCount}}</span> 订单</div></el-col>
-                <el-col :span="4"><div class="data_list"><span class="data_num">{{allAdminCount}}</span> 管理员</div></el-col>
+                <el-col :span="4"><div style="margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">GPU2：</span></div></el-col>
+				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         已用内存<span class="data_num">500MB</span></div></el-col>
+				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         剩余内存<span class="data_num">700MB</span></div></el-col>
+				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         总内存<span class="data_num">1200MB</span></div></el-col>
             </el-row>
 		</section>
+		<section class="data_section">
+		      <el-col :span="4"><div class="data_list today_head"><span class="data_num head">资源消耗：</span></div></el-col>
+		</section>
 		<tendency :sevenDate='sevenDate' :sevenDay='sevenDay'></tendency>
+		<section class="data_section">
+		      <el-col :span="4"><div class="data_list today_head"><span class="data_num head">平台更新（V1.3.5）：</span></div></el-col>
+		      <br><br>
+		      <el-col :span="4"><div style="margin-left:10%;font-size: 20px;padding: 4px;">更新内容（v1.1.2）：</span></div></el-col>
+		      		<el-col :span="100"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         系统升级优化；大数据可视化图表优化；新加报警微信公众号通知；新增设置数据导出功能</div></el-col>
+		</section>
     </div>
 </template>
 
 <script>
 	import headTop from '../components/headTop'
-	import tendency from '../components/tendency' 
+	import tendency from '../components/tendency'
 	import dtime from 'time-formater'
 	import {userCount, orderCount, getUserCount, getOrderCount, adminDayCount, adminCount} from '@/api/getData'
     export default {

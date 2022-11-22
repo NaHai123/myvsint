@@ -7,15 +7,37 @@
     ></div>
     <router-view></router-view>
           <div style="position:absolute;z-index:2;margin-left:12px;margin-top:40%;width:82%;">
+            <span style="opacity:70%;padding:1px;background:#D0D0D0;" class="data_num head">
             真实雷电数据日期时间：{{this.period[this.periodID]}},
             预测雷电数据日期时间：{{this.predictPeriod[this.predictPeriodID]}}
+            </span>
             <el-progress :text-inside="true" :stroke-width="30" :percentage="percent" />
           </div>
 
+          <el-col :span="4">
+          <div class="data_list today_head"
+               style="padding:1px;background:#D8D8D8;opacity:70%;font-size: 40px;position:absolute;z-index:3;margin-top:2%;margin-left:4%;">
+                      <span class="data_num head">实时预测雷电发生情况：</span>
+          </div></el-col>
+          <div style="padding:1px;background:#D8D8D8;opacity:70%;font-size: 35px;position:absolute;z-index:3;margin-top:5.8%;margin-left:4%;">
+               {{this.points.length}}
+          </div>
+          <div
+             style="width:35%;height:50%;padding:1px;background:#D8D8D8;opacity:70%;font-size: 40px;position:absolute;z-index:2;margin-top:9%;margin-left:4%;">
+             <tendencyForMap :sevenDate='sevenDate' :sevenDay='sevenDay'></tendencyForMap>
+          </div>
+          <div>
+          <button style="color:white;position:absolute;z-index:2;font-size:20px;background:#0088FF;padding:10px;border-radius: 40px;"
+           v-on:click="pauseMap">暂停</button>
+          <button style="margin-left:4%;color:white;position:absolute;z-index:2;font-size:20px;background:#0088FF;padding:10px;border-radius: 40px;"
+           v-on:click="continueMap">继续</button>
+          </div>
   </div>
 
 </template>
 <script>
+import lightning from '../page/lightning.png'  //新增，引入闪电图片
+import tendencyForMap from '../components/tendencyForMap'            //用于map.vue的柱状图和折线图
 export default {
   name: 'app',
   data () {
@@ -28,15 +50,50 @@ export default {
       predictPeriod:["202007111650_h0","202007111750_h1","202007111850_h2","202007111950_h3","202007112050_h4","202007112150_h5","202007112250_h6","202007112350_h7","202007120050_h8","202007120150_h9","202007120250_h10","202007120350_h11"], //存储要读取的预测数据的时间段
       periodID:-1,    //用于period[periodID]取各时间段真实数据文件
       predictPeriodID:-1,    //用于predictPeriod[predictPeriodID]取各时间段预测数据文件
-      percent:0,
-      //map:{}
+      percent:0,          //用于进度条
+      pause:0,             //1表示暂停，0表示运行
+      sevenDay: ["0时\n0周\n0月","4时\n1周\n1月","8时\n2周\n2月","12时\n3周\n3月","16时\n4周\n4月","20时\n5周\n5月","24时(当前)\n6周(当前)\n6月(当前)"],      //用于map.vue的柱状图和折线图
+      sevenDate: [[],[],[]],   //用于map.vue的柱状图和折线图
     }
+  },
+  //柱状图和折线图
+  components: {
+    		tendencyForMap,            //用于map.vue的柱状图和折线图
   },
     created(){
      //this.init();
      this.loadBMapLib();
   },
   methods: {
+    //表格动态变化
+    ChartUpdate()
+  {
+	 let temp = this.predictPeriodID
+ if (temp%2 == 0 || temp == 3)
+	 {
+	 this.sevenDate[0].push(Math.floor(Math.random()*250+50))
+	 this.sevenDate[1].push(Math.floor(Math.random()*350+70))
+	 this.sevenDate[2].push(Math.floor(Math.random()*500+100))
+	 };
+ if (temp == 0){
+     this.sevenDate[0].length = 0;this.sevenDate[0].push(Math.floor(Math.random()*250+50))
+     this.sevenDate[1].length = 0;this.sevenDate[1].push(Math.floor(Math.random()*350+70))
+     this.sevenDate[2].length = 0;this.sevenDate[2].push(Math.floor(Math.random()*500+100))
+     }  //若使用this.sevenDate[0] = []会消除_ob_:observer属性
+	 console.log(this.sevenDate[0])
+  },
+    //继续
+    continueMap: function () {
+                   this.map();
+                   this.pause = 0;   //1表示暂停，0表示运行
+                   alert("继续演示")
+                },
+    //暂停
+    pauseMap: function () {
+                   clearInterval(this.timer);
+                   this.pause = 1;   //1表示暂停，0表示运行
+                   alert("暂停成功")
+                },
     //添加BMapLib.heatmap
     loadBMapLib(){
         let script = document.createElement("script")
@@ -75,13 +132,16 @@ export default {
                   console.log("predictPeriodID"+" "+this.predictPeriodID)
 
                  for (let c = 0; c < this.predictBackdata.length; c++) {
-                  let a = {"lng":this.predictBackdata[c][0],"lat":this.predictBackdata[c][1],"count":50+Math.random()*100}
+                  //!!!注意，此处增加了模拟数据，以用于前期展示。后期需删除掉点b 以及 a中的偏离!!!
+                  let a = {"lng":this.predictBackdata[c][0],"lat":this.predictBackdata[c][1],"count":50+Math.random()*150}
+                  let b = {"lng":this.predictBackdata[c][0]+Math.random(),"lat":this.predictBackdata[c][1]+Math.random(),"count":50+Math.random()*100}
                   this.predictPoints.push(a)
+                  this.predictPoints.push(b)
                   }
 
 	//开始添加热力图
     var gradient = {
-    	0: 'rgb(102, 255, 0, 1)',         //0.7: 'rgb(0, 110, 255, 1)',
+    	0: 'rgb(102, 255, 0, 1)',         //0.7: 'rgb(0, 110, 255, 1)',   最后一位表示透明度，0为透明
     	0.5: 'rgb(255, 170, 0, 1)',         //0.8: 'rgb(241, 175, 6, 1)',
     	1: 'rgb(255, 0, 0, 1)'             //1: 'rgb(247, 46, 5, 1)'
     };
@@ -96,6 +156,7 @@ export default {
     heatmapOverlay.setOptions({
 	    "gradient": gradient
     });
+     /*
         let labelPoint = new BMap.Point(105.83,21.32);
     let opts = {
       position : labelPoint,    // 指定文本标注所在的地理位置
@@ -110,6 +171,7 @@ export default {
              fontFamily:"微软雅黑"
          });
      map.addOverlay(label);
+     */
     },
     // 添加地图右上角固定显示
     addZoomControl(map) {
@@ -141,18 +203,26 @@ export default {
 
         //标点、添加日期时间文本标注
         showPoly(pointList,map) {
-        /*方法1
+
+        //方法1
         //循环显示点对象
+        /*var myIcon = new BMap.Icon(require('./lightning.png'), new BMap.Size(20, 32), {//是引用图标的名字以及大小，注意大小要一样
+           anchor: new BMap.Size(10, 30)//这句表示图片相对于所加的点的位置
+                                });
+                                */
+        //使用本地图片作为标记点(物)。anchor设置图片偏移值
+        let myIcon = new BMap.Icon(require('./lightning1.svg'), new BMap.Size(32,32),{anchor: new BMap.Size(16, 32)});
         for (let c = 0; c < pointList.length; c++) {
-          var marker = new BMap.Marker(pointList[c]);
+          var marker = new BMap.Marker(pointList[c],{ icon: myIcon });
           //将途经点按顺序添加到地图上
           map.addOverlay(marker);
           //设置标签
           //var label = new BMap.Label(c + 1, { offset: new BMap.Size(20, -10) });
           //marker.setLabel(label);
         }
-        */
 
+
+        /*
         //方法2
         let options = {
           size: BMAP_POINT_SIZE_NORMAL,
@@ -161,21 +231,24 @@ export default {
         };
         let pointCollection = new BMap.PointCollection(pointList,options)
         map.addOverlay(pointCollection);
+
     //添加日期时间文本标注。！！！还需修改为固定在网页底部，暂未实现！！！
-    let labelPoint = new BMap.Point(105.83,19.32);
-    let opts = {
-      position : labelPoint,    // 指定文本标注所在的地理位置
-      offset   : new BMap.Size(30, -30)    //设置文本偏移量
-    };
-    let label = new BMap.Label("真实雷电数据日期时间："+this.period[this.periodID].toString(), opts);  // 创建文本标注对象
-        label.setStyle({
-             color : "red",
-             fontSize : "12px",
-             height : "20px",
-             lineHeight : "20px",
-             fontFamily:"微软雅黑"
-         });
-     map.addOverlay(label);
+    //let labelPoint = new BMap.Point(105.83,19.32);
+    //let opts = {
+    //  position : labelPoint,    // 指定文本标注所在的地理位置
+    //  offset   : new BMap.Size(30, -30)    //设置文本偏移量
+    //};
+    //let label = new BMap.Label("真实雷电数据日期时间："+this.period[this.periodID].toString(), opts);  // 创建文本标注对象
+    //    label.setStyle({
+    //         color : "red",
+    //         fontSize : "12px",
+    //         height : "20px",
+    //         lineHeight : "20px",
+    //         fontFamily:"微软雅黑"
+    //     });
+    // map.addOverlay(label);
+
+     */
 
         /*
         //方法3
@@ -218,9 +291,13 @@ export default {
      },
      //生成百度地图，并在地图上标记points中的坐标
     map(){
-      let map = new window.BMap.Map(this.$refs.allmap) // 创建Map实例
+     //if ( this.pause!=1 ),避免暂停后再继续会重新刷新地图BMap。注意：会报错
+     //if ( this.pause == 0 )
+     //{
+      //var map = new window.BMap.Map(this.$refs.allmap,{mapType:BMAP_HYBRID_MAP}) // 创建Map实例,默认显示卫星地图
+      var map = new window.BMap.Map(this.$refs.allmap) // 创建Map实例,默认普通地图
       //this.map = map  //新增，使map可被其他位置使用
-      map.centerAndZoom(new window.BMap.Point(116.404, 39.915), 5) // 初始化地图,设置中心点坐标和地图级别
+      map.centerAndZoom(new window.BMap.Point(116.404, 39.915), 8) // 初始化地图,设置中心点坐标和地图级别
       map.addControl(new window.BMap.MapTypeControl({ // 添加地图类型控件
         mapTypes: [
           window.BMAP_NORMAL_MAP,
@@ -229,13 +306,14 @@ export default {
       }))
       map.setCurrentCity('四川省') // 设置地图显示的城市 此项是必须设置的
       map.enableScrollWheelZoom(true)// 开启鼠标滚轮缩放
+      //}
       //新增代码
       //标点
-
-            if (this.timer){
+   //this.pause = 1,说明刚刚暂停过，现在将继续运行
+   if (this.timer && this.pause!=1){
           clearInterval(this.timer);
   }else {
-       this.timer = setInterval( ()=>{map.clearOverlays();this.backdata=[];this.points=[];this.init();this.showPoly(this.points,map);this.addZoomControl(map);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(map);},5000 );  //5000ms刷新一次
+       this.timer = setInterval( ()=>{map.clearOverlays();this.backdata=[];this.points=[];this.init();this.showPoly(this.points,map);this.addZoomControl(map);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(map);this.ChartUpdate();},3000 );  //5000ms刷新一次
   }
   }
  },
@@ -258,7 +336,7 @@ destroyed () {
 }
 
 </script>
-<style>
+<style lang="less">
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -271,4 +349,42 @@ destroyed () {
     width: 100%;
     height: 790px;
 }
+	@import '../style/mixin';
+	.data_section{
+		padding: 20px;
+		margin-bottom: 40px;
+		.section_title{
+			text-align: center;
+			font-size: 30px;
+			margin-bottom: 10px;
+		}
+		.data_list{
+			text-align: center;
+			font-size: 14px;
+			color: #666;
+            border-radius: 6px;
+            background: #E5E9F2;
+            .data_num{
+                color: #333;
+                font-size: 26px;
+
+            }
+            .head{
+                border-radius: 6px;
+                font-size: 22px;
+                padding: 4px 0;
+                color: #fff;
+                display: inline-block;
+            }
+        }
+        .today_head{
+            background: #FF9800;
+        }
+        .all_head{
+            background: #20A0FF;
+        }
+	}
+    .wan{
+        .sc(16px, #333)
+    }
 </style>

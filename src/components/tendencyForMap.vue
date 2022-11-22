@@ -26,7 +26,7 @@
                 const option = {
                     color: colors,
                     title: {
-                        text: '走势图',
+                        text: '雷电高发时刻',
                         subtext: ''
                     },
                     tooltip: {
@@ -54,9 +54,9 @@
                     yAxis: [
                         {
                           type: 'value',
-                          name: '单位：%',
+                          name: '单位：次',
                           min: 0,
-                          max: 100,
+                          max: 600,
                           position: 'left',
                           axisLine: {
                               lineStyle: {
@@ -69,9 +69,9 @@
                         },
                         {
                           type: 'value',
-                          name: '单位：%',
+                          name: '单位：次',
                           min: 0,
-                          max: 100,
+                          max: 600,
                           position: 'right',
                           axisLine: {
                               lineStyle: {
@@ -127,6 +127,7 @@
         },
         watch: {
             sevenDate: function (){
+
                 this.initData()
             },
             sevenDay: function (){
