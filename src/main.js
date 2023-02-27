@@ -49,3 +49,7 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount("#app");
+
+//新增 引入axios实现全局注册
+import axios from 'axios'
+Vue.prototype.$http = axios

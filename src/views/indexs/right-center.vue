@@ -63,7 +63,15 @@ export default {
         if (res.success) {
           this.config = {
             ...this.config,
-            data: res.data
+            //新增！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+            data: [{value:26+Math.floor(50*Math.random()),name: "北京市"},{value:15+Math.floor(50*Math.random()),name: "天津市"},
+                   {value:36+Math.floor(60*Math.random()),name: "石家庄市"},{value:36+Math.floor(60*Math.random()),name: "唐山市"},
+                   {value:36+Math.floor(60*Math.random()),name: "秦皇岛市"},{value:36+Math.floor(60*Math.random()),name: "邯郸市"},
+                   {value:36+Math.floor(60*Math.random()),name: "邢台市"},{value:36+Math.floor(60*Math.random()),name: "衡水市"},
+                   {value:36+Math.floor(60*Math.random()),name: "沧州市"},{value:36+Math.floor(60*Math.random()),name: "廊坊市"},
+                   {value:36+Math.floor(60*Math.random()),name: "保定市"},{value:36+Math.floor(60*Math.random()),name: "张家口市"},
+                   {value:36+Math.floor(60*Math.random()),name: "承德市"},
+                   ]
           }
           this.switper()
         } else {

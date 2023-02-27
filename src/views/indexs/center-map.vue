@@ -7,11 +7,14 @@
 -->
 <template>
   <div class="centermap">
+
+     <!--注释1-  "雷电预测图"文字可移动到边框内  -->
     <div class="maptitle">
       <div class="zuo"></div>
       <span class="titletext">{{ maptitle }}</span>
       <div class="you"></div>
     </div>
+
     <div class="mapwrap">
       <dv-border-box-13>
         <div class="quanguo" @click="getData('china')" v-if="code !== 'china'">
@@ -32,11 +35,15 @@ import { GETNOBASE } from "api";
 export default {
   data() {
     return {
-      maptitle: "设备分布图",
+      maptitle: "雷电预测图",
       options: {},
       code: "china", //china 代表中国 其他地市是行政编码
       echartBindClick: false,
-      isSouthChinaSea: false, //是否要展示南海群岛  修改此值请刷新页面
+      isSouthChinaSea: false, //是否要展示南海群岛  修改此值请刷新页面,
+      //新增
+      period:[202007111600,202007111700,202007111800,202007111900,202007112000,202007112100,202007112200,202007112300,202007120000,202007120100,202007120200,202007120300],   //存储要读取的真实数据的时间段
+      periodID:-1,    //用于period[periodID]取各时间段真实数据文件
+      backdata:[],    //存放后端数据
     };
   },
   created() {},
@@ -96,12 +103,67 @@ export default {
           });
         }
       });
+      //新增
+      console.log("mydata",mydata)
+      console.log("newData",newData)
+      mydata = []
+      newData = []
+      this.periodID = (this.periodID+1)%12
+      this.$http.post("http://127.0.0.1:8000/model1/",
+           {'uid':0,     //0表示取真实数据，1表示取预测数据
+            'period':this.period[this.periodID]    //指示后端读取时间段202007111600的npy文件 ykcs
+                  },
+           {
+              headers:{'Content-Type':'application/json'},
+              emulateJSON:true
+           }).then(
+              success=>{
+                 this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 console.log("this.backdata",this.backdata)
+                 //sessionStorage.setItem("success",success.data)  //存在问题：接收后端数据需刷新两次页面
+              }
+                  );
+      mydata.push({name: "北京市",value:1779})
+      newData.push({name: "北京市",value:[116.38,39.9,1779]})
+      mydata.push({name: "海淀区",value:63})
+      newData.push({name: "海淀区",value:[116.23,40.01,63]})
+      mydata.push({name: "密云区",value:1028})
+      newData.push({name: "密云区",value:[117,40.52,1028]})
+      mydata.push({name: "怀柔区",value:688})
+      newData.push({name: "怀柔区",value:[116.6,40.63,688]})
+      mydata.push({name: "天津市",value:25})
+      newData.push({name: "天津市",value:[117.2,39.13,25]})
+      //mydata.push({name: "河北省",value:88})
+      //newData.push({name: "河北省",value:[114.26,38.03,88]})
+      mydata.push({name: "石家庄市",value:233})
+      newData.push({name: "石家庄市",value:[114.36,38.13,233]})
+      mydata.push({name: "唐山市",value:12})
+      newData.push({name: "唐山市",value:[118.3,39.8,12]})
+      mydata.push({name: "秦皇岛市",value:22})
+      newData.push({name: "秦皇岛市",value:[119.2,40.1,22]})
+      mydata.push({name: "邯郸市",value:18})
+      newData.push({name: "邯郸市",value:[114.54,36.6,18]})
+      mydata.push({name: "邢台市",value:123})
+      newData.push({name: "邢台市",value:[114.85,37.15,450]})
+      mydata.push({name: "衡水市",value:450})
+      newData.push({name: "衡水市",value:[115.85,37.8,450]})
+      mydata.push({name: "沧州市",value:67})
+      newData.push({name: "沧州市",value:[116.85,38.2,67]})
+      mydata.push({name: "廊坊市",value:668})
+      newData.push({name: "廊坊市",value:[116.48,39.15,668]})
+      mydata.push({name: "保定市",value:668})
+      newData.push({name: "保定市",value:[115.2,39,668]})
+      mydata.push({name: "张家口市",value:1128})
+      newData.push({name: "张家口市",value:[115,41,1128]})
+      mydata.push({name: "承德市",value:66})
+      newData.push({name: "承德市",value:[117.6,41.3,66]})
       this.init(name, mydata, newData);
     },
     init(name, data, data2) {
-      // console.log(data2);
-      let top = 45;
-      let zoom = 1.05;
+      console.log(data);
+      let top = 80;  //地图与顶端边框距离
+      let zoom = 1.1;  //地图大小
+      //地图风格、大小设置？
       let option = {
         backgroundColor: "rgba(0,0,0,0)",
         tooltip: {
@@ -161,7 +223,7 @@ export default {
               show: true,
               formatter: function (params) {
                 if (params.data) {
-                  return params.name + "：" + params.data["value"];
+                  return params.name + "闪电数：" + params.data["value"]; //显示发生次数
                 } else {
                   return params.name;
                 }
@@ -192,7 +254,7 @@ export default {
               },
               itemStyle: {
                 areaColor: "#389BB7",
-                borderWidth: 1,
+                borderWidth: 3,   //选中省市时边界特效宽度
               },
             },
             itemStyle: {
@@ -226,14 +288,14 @@ export default {
             type: "effectScatter",
             coordinateSystem: "geo",
             symbolSize: function (val) {
-              return 4;
+              return 8;   //标记点大小,原来为4
               // return val[2] / 50;
             },
             legendHoverLink: true,
             showEffectOn: "render",
             rippleEffect: {
               // period: 4,
-              scale: 6,
+              scale: 6,   //标记点大小？
               color: "rgba(255,255,255, 1)",
               brushType: "fill",
             },
@@ -241,7 +303,7 @@ export default {
               show: true,
               formatter: function (params) {
                 if (params.data) {
-                  return params.name + "：" + params.data["value"][2];
+                  return params.name + "闪电数：" + params.data["value"][2];
                 } else {
                   return params.name;
                 }
@@ -257,7 +319,7 @@ export default {
                 return param.name.slice(0, 2);
               },
 
-              fontSize: 11,
+              fontSize: 15,  //省市名、地名文字的大小
               offset: [0, 2],
               position: "bottom",
               textBorderColor: "#fff",
@@ -351,7 +413,7 @@ export default {
   }
 
   .mapwrap {
-    height: 548px;
+    height: 850px;  //地图高度
     width: 100%;
     // padding: 0 0 10px 0;
     box-sizing: border-box;

@@ -7,53 +7,35 @@
 -->
 <template>
   <div class="contents">
-    <div class="contetn_left">
-      <div class="pagetab">
-        <!-- <div class="item">实时监测</div> -->
-        
-      </div>
-      <ItemWrap class="contetn_left-top contetn_lr-item" title="设备总览">
-        <LeftTop/>
-    
-      </ItemWrap>
-      <ItemWrap class="contetn_left-center contetn_lr-item" title="用户总览">
-        <LeftCenter />
-      </ItemWrap>
-      <ItemWrap
-        class="contetn_left-bottom contetn_lr-item"
-        title="设备提醒"
-        style="padding: 0 10px 16px 10px"
-      >
-        <LeftBottom />
-      </ItemWrap>
-    </div>
-    <div class="contetn_center">
+
+    <!--注释2-  改变中间和右边的排版即可调整本页面  -->
+
+    <div style="width: 1300px; height:1000px; margin-top: 1%">   <!--注释3-  改变地图边框高度改center-map.vue中mapwrap；改变地图大小改center-map.vue中init中zoom  -->
+
       <CenterMap class="contetn_center_top" />
-      <ItemWrap class="contetn_center-bottom" title="安装计划">
-        <CenterBottom />
-      </ItemWrap>
+
+
     </div>
+
     <div class="contetn_right">
       <ItemWrap
         class="contetn_left-bottom contetn_lr-item"
-        title="报警次数"
+        title="雷电高发时刻"
       >
-        <RightTop />
+        <RightTop />   <!--注释1-  用于"雷电高发时刻"里数据显示  -->
+
       </ItemWrap>
+
       <ItemWrap
         class="contetn_left-bottom contetn_lr-item"
-        title="报警排名(TOP8)"
+        title="实时预测雷电发生情况(京津冀地区)"
         style="padding: 0 10px 16px 10px"
       >
         <RightCenter />
-      </ItemWrap>
-      <ItemWrap
-        class="contetn_left-bottom contetn_lr-item"
-        title="数据统计图 "
-      >
-        <RightBottom />
+
       </ItemWrap>
     </div>
+
   </div>
 </template>
 
@@ -125,6 +107,8 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+
+
   }
 
   .contetn_center-bottom {
