@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div id="back">
         <head-top></head-top>
-        <el-row style="margin-top: 20px;">
+        <el-row style="margin-top: 20px;color:white;">
   			<el-col :span="12" :offset="4">
 		        <el-form :model="formData" :rules="rules" ref="formData" label-width="110px" class="demo-formData">
 					<el-form-item label="环境名称" prop="name">
@@ -447,6 +447,12 @@
 
 <style lang="less">
 	@import '../style/mixin';
+	#back{
+background:url("../assets/img/background.png");
+width:100%;
+height:100%;
+background-attachment: fixed;
+}
 	.button_submit{
 		text-align: center;
 	}

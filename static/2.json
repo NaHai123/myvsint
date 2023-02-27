@@ -1,0 +1,19 @@
+{
+"name": "Net1",
+"kind": "Net1",
+"trainer": "Liu",
+    "history1": "No error reporting history now",
+    "history2": "No error reporting history now",
+    "history3": "No error reporting history now",
+    "cost": "78%",
+    "state": "训练中",
+    "start": "17:33 2023/2/2",
+    "end": "",
+    "h1": "No training history now",
+    "h2": "No training history now",
+    "h3": "No training history now",
+    "epoch": "1/100",
+    "memory": "78%",
+    "loss": "0.003",
+    "curren": "19.78"
+}

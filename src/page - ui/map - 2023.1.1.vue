@@ -7,38 +7,38 @@
     ></div>
     <router-view></router-view>
           <div style="position:absolute;z-index:2;margin-left:12px;margin-top:40%;width:82%;">
-            <span style="border-radius: 40px;opacity:70%;color:white;padding:1px;background:#505050;" class="data_num head">
-            &nbsp;&nbsp;真实雷电数据日期时间：{{this.period[this.periodID]}},
+            <span style="opacity:70%;padding:1px;background:#D0D0D0;" class="data_num head">
+            真实雷电数据日期时间：{{this.period[this.periodID]}},
             预测雷电数据日期时间：{{this.predictPeriod[this.predictPeriodID]}}
             </span>
-            <el-progress style="border-radius: 40px;opacity:70%;color:white;padding:1px;background:#505050;" :text-inside="true" :stroke-width="30" :percentage="percent" />
+            <el-progress :text-inside="true" :stroke-width="30" :percentage="percent" />
           </div>
 
           <el-col :span="4">
           <div class="data_list today_head"
-               style="border-radius: 40px;padding:1px;color:white;background:#505050;opacity:70%;font-size: 40px;position:absolute;z-index:3;margin-top:2%;margin-left:4%;">
-                      <span class="data_num head">&nbsp;&nbsp;实时预测雷电发生情况：</span>
+               style="padding:1px;background:#D8D8D8;opacity:70%;font-size: 40px;position:absolute;z-index:3;margin-top:2%;margin-left:4%;">
+                      <span class="data_num head">实时预测雷电发生情况：</span>
           </div></el-col>
-          <div style="border-radius: 40px;padding:1px;color:white;background:#505050;opacity:70%;font-size: 35px;position:absolute;z-index:3;margin-top:5.8%;margin-left:4%;">
-               &nbsp;&nbsp;{{this.points.length}}&nbsp;&nbsp;
+          <div style="padding:1px;background:#D8D8D8;opacity:70%;font-size: 35px;position:absolute;z-index:3;margin-top:5.8%;margin-left:4%;">
+               {{this.points.length}}
           </div>
           <div
-             style="border-radius: 40px;width:35%;height:47%;padding:1px;background:#D0D0D0;opacity:70%;font-size: 40px;position:absolute;z-index:2;margin-top:9%;margin-left:4%;">
+             style="width:35%;height:50%;padding:1px;background:#D8D8D8;opacity:70%;font-size: 40px;position:absolute;z-index:2;margin-top:9%;margin-left:4%;">
              <tendencyForMap :sevenDate='sevenDate' :sevenDay='sevenDay'></tendencyForMap>
           </div>
           <div>
-          <el-button type="primary" style="opacity:70%;color:white;position:absolute;z-index:2;font-size:20px;background:#505050;border-color:#808080;padding:10px;border-radius: 40px;"
-           v-on:click="pauseMap">暂停</el-button>
-          <el-button type="primary"  style="opacity:70%;margin-left:4%;color:white;position:absolute;z-index:2;font-size:20px;background:#505050;border-color:#808080;padding:10px;border-radius: 40px;"
-           v-on:click="continueMap">继续</el-button>
+          <button style="color:white;position:absolute;z-index:2;font-size:20px;background:#0088FF;padding:10px;border-radius: 40px;"
+           v-on:click="pauseMap">暂停</button>
+          <button style="margin-left:4%;color:white;position:absolute;z-index:2;font-size:20px;background:#0088FF;padding:10px;border-radius: 40px;"
+           v-on:click="continueMap">继续</button>
           </div>
 
           <div>
-            <form style="opacity:70%;color:white;margin-left:50%;position:absolute;z-index:2;font-size:20px;background:#505050;border-color:#808080;padding:10px;border-radius: 40px;" >
-              <label for="time">选择时间序号（1~12）：</label>   <!-- 用来获取焦点 ，点击“账号：”后可以选中input框，它里面的for对应下面的id -->
+            <form style="color:white;margin-left:50%;;position:absolute;z-index:2;font-size:20px;background:#0088FF;padding:10px;border-radius: 40px;" >
+              <label for="time">选择时间序号（0~11）：</label>   <!-- 用来获取焦点 ，点击“账号：”后可以选中input框，它里面的for对应下面的id -->
               <input type="number" id="time" v-model.trim="selectPeriodID">   <!-- 这里v-model收集的是input中输入的value值 , trim表示去掉输入框中前后的空格-->
               <!--   <br />   换行-->
-              <el-button type="primary" style="color:white;background:#383838;border-color:#808080;"  @click="selectTime">提交</el-button>
+              <button @click="selectTime">提交</button>
             </form>
           </div>
 
@@ -60,14 +60,14 @@ export default {
       period:[202007111600,202007111700,202007111800,202007111900,202007112000,202007112100,202007112200,202007112300,202007120000,202007120100,202007120200,202007120300],   //存储要读取的真实数据的时间段
       predictPeriod:["202007111650_h0","202007111750_h1","202007111850_h2","202007111950_h3","202007112050_h4","202007112150_h5","202007112250_h6","202007112350_h7","202007120050_h8","202007120150_h9","202007120250_h10","202007120350_h11"], //存储要读取的预测数据的时间段
       periodID:-1,    //用于period[periodID]取各时间段真实数据文件
-      selectPeriodID:1,
+      selectPeriodID:-1,
       predictPeriodID:-1,    //用于predictPeriod[predictPeriodID]取各时间段预测数据文件
       selectPredictPeriodID:-1,
       percent:0,          //用于进度条
       pause:0,             //1表示暂停，0表示运行
       sevenDay: ["0时\n0周\n0月","4时\n1周\n1月","8时\n2周\n2月","12时\n3周\n3月","16时\n4周\n4月","20时\n5周\n5月","24时(当前)\n6周(当前)\n6月(当前)"],      //用于map.vue的柱状图和折线图
       sevenDate: [[],[],[]],   //用于map.vue的柱状图和折线图
-      baiduMap:null,
+      baiduMap : new window.BMap.Map(this.$refs.allmap), // 创建Map实例,默认普通地图
     }
   },
   //柱状图和折线图
@@ -80,9 +80,9 @@ export default {
   },
   methods: {
   selectTime(){
-      this.selectPredictPeriodID = parseInt(this.selectPeriodID)-2  //this.selectPeriodID为字符串？？parseInt转换为数字
-      this.periodID = parseInt(this.selectPeriodID)-2
-      this.predictPeriodID = parseInt(this.selectPeriodID)-2
+      this.selectPredictPeriodID = this.selectPeriodID
+      this.periodID = this.selectPeriodID
+      this.predictPeriodID = this.selectPeriodID
       this.baiduMap.clearOverlays();
       this.backdata=[];
       this.points=[];
@@ -93,9 +93,6 @@ export default {
       this.predictPoints=[];
       this.predictANDheatmap(this.baiduMap);
       this.ChartUpdate();
-      this.selectPredictPeriodID = parseInt(this.selectPeriodID)-2  //this.selectPeriodID为字符串？？parseInt转换为数字
-      this.periodID = parseInt(this.selectPeriodID)-2
-      this.predictPeriodID = parseInt(this.selectPeriodID)-2
       this.pauseMap()
   },
     //表格动态变化
@@ -328,29 +325,17 @@ export default {
      //if ( this.pause == 0 )
      //{
       //var map = new window.BMap.Map(this.$refs.allmap,{mapType:BMAP_HYBRID_MAP}) // 创建Map实例,默认显示卫星地图
-      var map = new window.BMap.Map(this.$refs.allmap) // 创建Map实例,默认普通地图
-      this.baiduMap = map
+      //var map = new window.BMap.Map(this.$refs.allmap) // 创建Map实例,默认普通地图
       //this.map = map  //新增，使map可被其他位置使用
-      map.centerAndZoom(new window.BMap.Point(116.404, 39.915), 8) // 初始化地图,设置中心点坐标和地图级别
-      map.addControl(new window.BMap.MapTypeControl({ // 添加地图类型控件
+      this.baiduMap.centerAndZoom(new window.BMap.Point(116.404, 39.915), 8) // 初始化地图,设置中心点坐标和地图级别
+      this.baiduMap.addControl(new window.BMap.MapTypeControl({ // 添加地图类型控件
         mapTypes: [
           window.BMAP_NORMAL_MAP,
           window.BMAP_HYBRID_MAP,
         ]
       }))
-      map.setCurrentCity('四川省') // 设置地图显示的城市 此项是必须设置的
-      map.enableScrollWheelZoom(true)// 开启鼠标滚轮缩放
-      /* 设置地图样式
-      map.setMapStyleV3({
-            styleId: 'b12c5211b047a1ccdd1fa247926d6692'
-          });
-      map.setMapStyle({
-            style:"dark"
-          });
-      */
-      map.setMapStyleV2({
-            styleId: 'b12c5211b047a1ccdd1fa247926d6692'
-          });
+      this.baiduMap.setCurrentCity('四川省') // 设置地图显示的城市 此项是必须设置的
+      this.baiduMap.enableScrollWheelZoom(true)// 开启鼠标滚轮缩放
       //}
       //新增代码
       //标点
@@ -358,7 +343,7 @@ export default {
    if (this.timer && this.pause!=1){
           clearInterval(this.timer);
   }else {
-       this.timer = setInterval( ()=>{map.clearOverlays();this.backdata=[];this.points=[];this.init();this.showPoly(this.points,map);this.addZoomControl(map);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(map);this.ChartUpdate();},3000 );  //5000ms刷新一次
+       this.timer = setInterval( ()=>{this.baiduMap.clearOverlays();this.backdata=[];this.points=[];this.init();this.showPoly(this.points,this.baiduMap);this.addZoomControl(this.baiduMap);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(this.baiduMap);this.ChartUpdate();},3000 );  //5000ms刷新一次
   }
   }
  },

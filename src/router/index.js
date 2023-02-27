@@ -13,6 +13,7 @@ const ssh = r => require.ensure([], () => r(require('@/page/ssh')), 'ssh');
 const orderList = r => require.ensure([], () => r(require('@/page/orderList')), 'orderList');
 const sshlogin = r => require.ensure([], () => r(require('@/page/sshlogin')), 'sshlogin');
 const map = r => require.ensure([], () => r(require('@/page/map')), 'map');
+const mapB = r => require.ensure([], () => r(require('@/page/mapB')), 'mapB');
 const visitor = r => require.ensure([], () => r(require('@/page/visitor')), 'visitor');
 const newMember = r => require.ensure([], () => r(require('@/page/newMember')), 'newMember');
 const uploadImg = r => require.ensure([], () => r(require('@/page/uploadImg')), 'uploadImg');
@@ -37,7 +38,7 @@ const routes = [
 		},{
 			path: '/addShop',
 			component: addShop,
-			meta: ['添加数据', '添加商铺'],
+			meta: ['模型部署', '配置数据源'],
 		},{
 			path: '/addGoods',
 			component: addGoods,
@@ -46,6 +47,10 @@ const routes = [
 			path: '/map',
 			component: map,
 			meta: ['数据管理', '地图'],
+		},{
+			path: '/mapB',
+			component: mapB,
+			meta: ['数据管理', '地图B'],
 		},{
 			path: '/shopList',
 			component: shopList,

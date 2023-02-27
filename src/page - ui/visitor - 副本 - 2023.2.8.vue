@@ -27,7 +27,7 @@ height:1000px;
     </div>
     <div id="back2">
 
-          <div style="width: 25%;height: 85%;float: left;border-style: solid;background-color:rgba(255,255,255,0.1);border-color: black;margin-left:80px">
+          <div style="width: 25%;height: 82%;float: left;border-style: solid;background-color:rgba(255,255,255,0.1);border-color: black;margin-left:80px">
                  <div style="height:5%;text-align:left;;color:white;font-size:150%;margin-left:10px" font-size:40px>
                           模型列表
                  </div>
@@ -35,13 +35,13 @@ height:1000px;
                  模型名称：
                  </div>
                 <input type="search" name="" id="" style="width:100px;height:30px;border-style: solid;border-color:black;margin:5px">
-                        <button type="button" style="width:40px;height:20px;background-color:#00CCFF;">搜索</button>
+                        <button type="button" style="width:40px;height:20px">搜索</button>
                <details style="color:white;text-align:left">
                        <summary>全部</summary>
                        <ol>
-                           <li>Net1</li>
-                           <li>Net2</li>
-                           <li>Net3</li>
+                           <li>模型1</li>
+                           <li>模型2</li>
+                           <li>模型3</li>
                        </ol>
                    </details>
                 <details style="color:white;text-align:left">
@@ -54,35 +54,35 @@ height:1000px;
                </details>
 
           </div>
-          <div style="width:40%;height: 42%;color:white;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);float: left;text-align:center;margin-left:5px">
-               <p style="height:5%;text-align:left;;color:white;font-size:150%;margin-left:10px" font-size:40px>{{name}}</p>
-               <div style="width:25%;height: 20%;color:white;border-style: solid;border-color: rgba(255,255,255,0.1);background-color:rgba(255,255,80,0.1);float: left;text-align:center;margin-left:35px;margin-top:50px">
+          <div style="width:35%;height: 40%;color:white;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);float: left;text-align:center;margin-left:5px">
+               <p>{{name}}</p>
+               <div style="width:25%;height: 20%;color:white;border-style: solid;border-color: rgba(255,255,255,0.1);background-color:rgba(255,255,80,0.1);float: left;text-align:center;margin-left:5px;margin-top:50px">
                epoch
                <div>
-               <br/>{{epoch}}
+               {{epoch}}
                </div>
                </div>
                 <div style="width:25%;height: 20%;color:white;border-style: solid;border-color: rgba(255,255,255,0.1);background-color:rgba(255,255,80,0.1);float: left;text-align:center;margin-left:40px;margin-top:50px">
                 内存
                  <div>
-                 <br/>{{memory}}
+                 {{memory}}
                  </div>
                 </div>
                  <div style="width:25%;height: 20%;color:white;border-style: solid;border-color: rgba(255,255,255,0.1);background-color:rgba(255,255,80,0.1);float: left;text-align:center;margin-left:40px;margin-top:50px">
                  loss
                  <div>
-                 <br/>{{loss}}
+                 {{loss}}
                  </div>
                  </div>
-                  <div style="width:30%;height: 20%;color:white;border-style: solid;border-color: rgba(255,255,255,0.1);background-color: rgba(255,255,80,0.1);float: left;text-align:center;margin-left:35px;margin-top:50px">
+                  <div style="width:30%;height: 20%;color:white;border-style: solid;border-color: rgba(255,255,255,0.1);background-color: rgba(255,255,80,0.1);float: left;text-align:center;margin-left:145px;margin-top:50px">
                      currentmaxets
                      <div>
-                     <br/>{{curren}}
+                     {{curren}}
                      </div>
                   </div>
           </div>
-          <div style="width: 25%;color:white;height: 42%;float: left;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);text-align:center;margin-left:5px">
-                <p style="height:10%;text-align:left;;color:white;font-size:150%;margin-left:10px" font-size:40px> 历史数据 </p>
+          <div style="width: 20%;color:white;height: 40%;float: left;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);text-align:center;margin-left:5px">
+                历史数据
                 <div  style="width: 90%;height: 28%;float: left;border-radius:10px;background-color: rgba(255,255,255,0.4);text-align:center;margin-left:10px">
                 <div>
                 {{h1}}
@@ -99,9 +99,9 @@ height:1000px;
                  </div>
                 </div>
           </div>
-          <div style="width: 40%;height: 42%;float: left;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);margin-left:5px;margin-top:5px">
-               <button style="border-radius: 50px;width: 15%;height: 10%;margin-left:10px;margin-top:5px;background-color:#00CCFF;" type="button">
-               终止训练
+          <div style="width: 35%;height: 40%;float: left;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);margin-left:5px;margin-top:5px">
+               <button style="width: 20%;height: 10%;margin-top:5px;background-color:lightblue" type="button">
+               终止
                </button>
                <div style="width: 45%;color:black;height: 80%;line-height:2.5;border-radius:5px;background-color:rgba(255,255,255,0.4);margin-left:10px;text-align:left;border-style: solid;margin-top:10px">
                模型分类：{{kind}}</br>
@@ -113,23 +113,13 @@ height:1000px;
                </div>
           </div>
 
-          <div style="width: 25%;color:white;height: 42%;float: left;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);text-align:center;margin-left:5px;margin-top:5px">
-                <p style="height:10%;text-align:left;;color:white;font-size:150%;margin-left:10px" font-size:40px> 模型报错历史 </p>
-                <div  style="width: 90%;height: 28%;float: left;border-radius:10px;background-color: rgba(255,255,255,0.4);text-align:center;margin-left:10px">
-                <div>
-                {{history1}}
-                </div>
-                </div>
-                <div  style="width: 90%;height: 28%;float: left;border-radius:10px;background-color:rgba(255,255,255,0.4);text-align:center;margin-left:10px;margin-top:3px">
-               <div>
-               {{history2}}
-               </div>
-                </div>
-                <div  style="width: 90%;height: 28%;float: left;border-radius:10px;background-color:rgba(255,255,255,0.4);text-align:center;margin-left:10px;margin-top:3px">
-                <div>
-                     {{history3}}
-                 </div>
-                </div>
+          <div style="width: 20%;height: 40%;color:white;font-size:20;float: left;background-color:rgba(255,255,255,0.1);border-style: solid;border-color: black;margin-top:5px;margin-left:5px">
+                <div style="width:42%;height:8%;color:white;border-style:solid;border-color:lightblue;margin-left:7px；margin-top:10px">
+                                模型报错历史
+                                <div>
+                                {{history}}
+                                </div>
+                          </div>
           </div>
 
     </div>
@@ -144,18 +134,16 @@ height:1000px;
 export default {
 data(){
 return{
- history1 :"history1",
- history2 :"history2",
- history3 :"history3",
+ history :"hello",
  kind:2,
  trainer:3,
  cost:4,
  state:5,
  start:6,
  end:7,
- h1:'historical data1',
- h2:"historical data2",
- h3:"historical data3",
+ h1:'none',
+ h2:"none",
+ h3:"none",
  epoch:1,
  memory:1,
  loss:1,
@@ -169,9 +157,7 @@ this.$http.get('http://localhost:8002/static/2.json')
 this.name=res.data.name,
 this.kind=res.data.kind
 this.trainer=res.data.trainer
-this.history1=res.data.history1
-this.history2=res.data.history2
-this.history3=res.data.history3
+this.history=res.data.history
 this.cost=res.data.cost
 this.state=res.data.state
 this.start=res.data.start

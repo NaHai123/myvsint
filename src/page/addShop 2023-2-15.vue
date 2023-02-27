@@ -4,57 +4,58 @@
         <el-row style="margin-top: 20px;">
   			<el-col :span="12" :offset="4">
 		        <el-form :model="formData" :rules="rules" ref="formData" label-width="110px" class="demo-formData">
-					<el-form-item label="环境名称" prop="name">
+					<el-form-item label="店铺名称" prop="name">
 						<el-input v-model="formData.name"></el-input>
 					</el-form-item>
-					<el-form-item label="配置标准库" prop="address">
+					<el-form-item label="详细地址" prop="address">
 						<el-autocomplete
 						  v-model="formData.address"
 						  :fetch-suggestions="querySearchAsync"
-						  placeholder="包请用#分割 例如 torch:3.6#numpy:3.5"
+						  placeholder="请输入地址"
 						  style="width: 100%;"
 						  @select="addressSelect"
 						></el-autocomplete>
+						<span>当前城市：{{city.name}}</span>
 					</el-form-item>
-					<el-form-item label="高级设置1" prop="phone">
+					<el-form-item label="联系电话" prop="phone">
 						<el-input v-model.number="formData.phone" maxLength="11"></el-input>
 					</el-form-item>
-					<el-form-item label="高级设置2" prop="description">
+					<el-form-item label="店铺简介" prop="description">
 						<el-input v-model="formData.description"></el-input>
 					</el-form-item>
-					<el-form-item label="高级设置3" prop="promotion_info">
+					<el-form-item label="店铺标语" prop="promotion_info">
 						<el-input v-model="formData.promotion_info"></el-input>
 					</el-form-item>
-					<el-form-item label="高级设置4">
+					<el-form-item label="店铺分类">
 						<el-cascader
 						  :options="categoryOptions"
 						  v-model="selectedCategory"
 						  change-on-select
 						></el-cascader>
 					</el-form-item>
-					<el-form-item label="高级设置5" style="white-space: nowrap;">
-						<span>选项1</span>
+					<el-form-item label="店铺特点" style="white-space: nowrap;">
+						<span>品牌保证</span>
 						<el-switch on-text="" off-text="" v-model="formData.is_premium"></el-switch>
-						<span>选项2</span>
+						<span>蜂鸟专送</span>
 						<el-switch on-text="" off-text="" v-model="formData.delivery_mode"></el-switch>
-						<span>选项3</span>
+						<span>新开店铺</span>
 						<el-switch on-text="" off-text="" v-model="formData.new"></el-switch>
 					</el-form-item>
 					<el-form-item style="white-space: nowrap;">
-						<span>选项4</span>
+						<span>外卖保</span>
 						<el-switch on-text="" off-text="" v-model="formData.bao"></el-switch>
-						<span>选项5</span>
+						<span>准时达</span>
 						<el-switch on-text="" off-text="" v-model="formData.zhun"></el-switch>
-						<span>选项6</span>
+						<span>开发票</span>
 						<el-switch on-text="" off-text="" v-model="formData.piao"></el-switch>
 					</el-form-item>
-					<el-form-item label="分配存储大小" prop="float_delivery_fee">
+					<el-form-item label="配送费" prop="float_delivery_fee">
 						<el-input-number v-model="formData.float_delivery_fee" :min="0" :max="20"></el-input-number>
 					</el-form-item>
-					<el-form-item label="分配内存大小" prop="float_minimum_order_amount">
+					<el-form-item label="起送价" prop="float_minimum_order_amount">
 						<el-input-number v-model="formData.float_minimum_order_amount" :min="0" :max="100"></el-input-number>
 					</el-form-item>
-					<el-form-item label="训练数据时间区间" style="white-space: nowrap;">
+					<el-form-item label="营业时间" style="white-space: nowrap;">
 						<el-time-select
 							placeholder="起始时间"
 							v-model="formData.startTime"
@@ -76,7 +77,7 @@
 						</el-time-select>
 					</el-form-item>
 
-					<el-form-item label="上传雷电数据">
+					<el-form-item label="上传店铺头像">
 						<el-upload
 						  class="avatar-uploader"
 						  :action="baseUrl + '/v1/addimg/shop'"
@@ -87,7 +88,7 @@
 						  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 						</el-upload>
 					</el-form-item>
-					<el-form-item label="上传训练权重">
+					<el-form-item label="上传营业执照">
 						<el-upload
 						  class="avatar-uploader"
 						  :action="baseUrl + '/v1/addimg/shop'"
@@ -98,7 +99,7 @@
 						  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 						</el-upload>
 					</el-form-item>
-					<el-form-item label="上传训练模型">
+					<el-form-item label="上传餐饮服务许可证">
 						<el-upload
 						  class="avatar-uploader"
 						  :action="baseUrl + '/v1/addimg/shop'"
@@ -109,7 +110,7 @@
 						  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 						</el-upload>
 					</el-form-item>
-					<el-form-item label="高级设置6">
+					<el-form-item label="优惠活动">
 						<el-select v-model="activityValue" @change="selectActivity" :placeholder="activityValue">
 						    <el-option
 						      	v-for="item in options"
@@ -126,20 +127,20 @@
 					    :row-class-name="tableRowClassName">
 					    <el-table-column
 					      prop="icon_name"
-					      label="已有配置"
+					      label="活动标题"
 					      align="cneter"
 					      width="120">
 					    </el-table-column>
 					    <el-table-column
 					      prop="name"
-					      label="配置名称"
+					      label="活动名称"
 					      align="cneter"
 					      width="120">
 					    </el-table-column>
 					    <el-table-column
 					      prop="description"
 					      align="cneter"
-					      label="配置详情">
+					      label="活动详情">
 					    </el-table-column>
 					    <el-table-column
 					    	label="操作"
@@ -194,34 +195,34 @@
 		        },
 		        rules: {
 					name: [
-						{ required: true, message: '请输入环境名称', trigger: 'blur' },
+						{ required: true, message: '请输入店铺名称', trigger: 'blur' },
 					],
 					address: [
-						{ required: true, message: '请输入conda配置标准库名:版本号', trigger: 'blur' }
+						{ required: true, message: '请输入详细地址', trigger: 'blur' }
 					],
 					phone: [
-						{ required: true, message: '请输入高级设置1' },
+						{ required: true, message: '请输入联系电话' },
 						{ type: 'number', message: '电话号码必须是数字' }
 					],
 				},
 				options: [{
-		          	value: '选项1',
-		          	label: '选项1'
+		          	value: '满减优惠',
+		          	label: '满减优惠'
 		        }, {
-		          	value: '选项2',
-		          	label: '选项2'
+		          	value: '优惠大酬宾',
+		          	label: '优惠大酬宾'
 		        }, {
-		          	value: '选项3',
-		          	label: '选项3'
+		          	value: '新用户立减',
+		          	label: '新用户立减'
 		        }, {
-		          	value: '选项4',
-		          	label: '选项5'
+		          	value: '进店领券',
+		          	label: '进店领券'
 		        }],
-       	 		activityValue: '选项1',
+       	 		activityValue: '满减优惠',
 				activities: [{
-		        	icon_name: '模型1',
-		        	name: '大创雷电预测配置',
-		        	description: '基于深度学习的机理与数据融合灾害性天气预报',
+		        	icon_name: '减',
+		        	name: '满减优惠',
+		        	description: '满30减5，满60减8',
 			    }],
 			    baseUrl,
 			    baseImgPath,

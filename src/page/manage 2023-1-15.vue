@@ -14,8 +14,9 @@
 					    <el-menu-item index="ssh">终端界面</el-menu-item>
 					</el-submenu>
 					<el-submenu index="3">
-						<template slot="title"><i class="el-icon-plus"></i>模型部署</template>
-						<el-menu-item index="addShop">模型部署</el-menu-item>
+						<template slot="title"><i class="el-icon-plus"></i>设备管理</template>
+						<el-menu-item index="addShop">添加商铺</el-menu-item>
+						<el-menu-item index="addGoods">添加商品</el-menu-item>
 					</el-submenu>
 					<el-submenu index="4">
 						<template slot="title"><i class="el-icon-star-on"></i>模型训练监控</template>
@@ -23,7 +24,7 @@
 						<!-- <el-menu-item index="newMember">用户数据</el-menu-item> -->
 					</el-submenu>
 					<el-submenu index="5">
-						<template slot="title"><i class="el-icon-edit"></i>设备管理</template>
+						<template slot="title"><i class="el-icon-edit"></i>模型部署</template>
 						<!-- <el-menu-item index="uploadImg">上传图片</el-menu-item> -->
 						<el-menu-item index="vueEdit">模型部署</el-menu-item>
 					</el-submenu>

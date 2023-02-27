@@ -1,6 +1,6 @@
 <template>
-    <div>  <!-- 若设置背景图则修改为 ：<div class="backGround">-->
-        <head-top></head-top>
+    <div id="back">  <!-- 若设置背景图则修改为 ：<div id="back">-->
+        <!--  <head-top></head-top> 顶部导航栏 -->
 		<section class="data_section">
 
 		    <div class="title">
@@ -10,7 +10,7 @@
 			<el-col :span="4"><div class="data_list today_head"><span class="data_num head">资源情况：</span></div></el-col>
 			<br><br>
 			<el-row :gutter="20" style="margin-bottom: 10px;">
-                <el-col :span="4"><div style="margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">GPU1：</span></div></el-col>
+                <el-col :span="4"><div style="color:white;margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">GPU1：</span></div></el-col>
 				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
 				         已用内存<span class="data_num">1000MB</span></div></el-col>
 				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
@@ -19,7 +19,7 @@
 				         总内存<span class="data_num">1200MB</span></div></el-col>
 			</el-row>
             <el-row :gutter="20">
-                <el-col :span="4"><div style="margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">GPU2：</span></div></el-col>
+                <el-col :span="4"><div style="color:white;margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">GPU2：</span></div></el-col>
 				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
 				         已用内存<span class="data_num">500MB</span></div></el-col>
 				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
@@ -31,7 +31,9 @@
 		<section class="data_section">
 		      <el-col :span="4"><div class="data_list today_head"><span class="data_num head">资源消耗：</span></div></el-col>
 		</section>
-		<tendency :sevenDate='sevenDate' :sevenDay='sevenDay'></tendency>
+		 <div style="position:absolute;z-index:0;border-radius: 40px;width:80%;height:40%;padding:1px;background:#FFFFFF;opacity:70%;font-size: 40px;margin-left:2%;margin-right:2%;">
+		 </div>
+		 <tendency :sevenDate='sevenDate' :sevenDay='sevenDay'></tendency>
 		<section class="data_section">
 		      <el-col :span="4"><div class="data_list today_head"><span class="data_num head">平台更新（V1.3.5）：</span></div></el-col>
 		      <br><br>
@@ -144,7 +146,7 @@
             }
         }
         .today_head{
-            background: #FF9800;
+            background: #0099FF;
         }
         .all_head{
             background: #20A0FF;
@@ -153,8 +155,10 @@
     .wan{
         .sc(16px, #333)
     }
-    .backGround {
-      background: url("../assets/img/background.png") no-repeat;
+    #back{
+    background:url("../assets/img/background.png");
+    width:100%;
+    height:100%;
     }
         .title {
             position: relative;
@@ -170,7 +174,7 @@
                 font-weight: 900;
                 letter-spacing: 6px;
                 width: 100%;
-                background: linear-gradient(92deg, #0072FF 0%, #000000 48.8525390625%, #01AAFF 100%);
+                background: linear-gradient(92deg, #0072FF 0%, #D8D8D8  48.8525390625%, #01AAFF 100%);
                 //background: linear-gradient(92deg, #0072FF 0%, #00EAFF 48.8525390625%, #01AAFF 100%); //原来的
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
