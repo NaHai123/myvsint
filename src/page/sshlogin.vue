@@ -32,7 +32,7 @@
         <el-form-item>
             <el-button type="primary" @click="onSubmit">保存信息</el-button>
             <el-button @click="reset">重置</el-button>
-            <el-button @click="test">输出</el-button>
+            <el-button @click="test">连接</el-button>
         </el-form-item>
 
     </el-form>
@@ -55,10 +55,10 @@
                 currentPage: 1,
                 connectData:{
                     operate: 'connect',
-                    host: '101.34.221.238',
+                    host: '39.101.142.88',
                     port: '22',
                     username: 'root',
-                    password: 'Tt070711'
+                    password: '$M%HbhmfRHL&dm7jBo'
                 },
                 type: '1',//连接类型
             }
@@ -74,8 +74,10 @@
                 this.connectData.password = '';
             },
             test: function () {
+                console.log(JSON.stringify(storage.state));
                 //将json对象转换为json字符串，传给后端
-                console.log(JSON.stringify(storage.state.sshlogin) )
+                console.log(JSON.stringify(storage.state.sshlogin) 
+                )
             },
                onSubmit: function () {
                 console.log('submit!');
@@ -88,7 +90,7 @@
                 if(this.type == '1'){
                     window.location.href = '#/ssh';
                 }else {
-                    window.location.href = '101.34.221.238:8088/sftp';
+                    window.location.href = '#/sftp';
                 }
 
             }

@@ -2,7 +2,7 @@ export function WSSHClient() {
 };
 
 
-var host = '101.34.221.238:8088'
+var host = '39.101.142.88:8080'
 
 WSSHClient.prototype._generateEndpoint = function () {
     var protocol = 'ws://';

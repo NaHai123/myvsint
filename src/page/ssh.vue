@@ -75,9 +75,15 @@
             }
         });
     },
-                attchssh: function () {
-                this.openTerminal(JSON.parse(this.connectData));
-            }
+    test(message){
+        console.log('oktest')
+        this.log(JSON.parse(message))
+    },
+
+    attchssh: function () {
+    //console.log(JSON.parse(this.connectData))
+    this.openTerminal(JSON.parse(this.connectData));
+    }
 }
     }
 </script>
