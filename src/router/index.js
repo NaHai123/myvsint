@@ -15,14 +15,18 @@ const sshlogin = r => require.ensure([], () => r(require('@/page/sshlogin')), 's
 const map = r => require.ensure([], () => r(require('@/page/map')), 'map');
 const mapB = r => require.ensure([], () => r(require('@/page/mapB')), 'mapB');
 const visitor = r => require.ensure([], () => r(require('@/page/visitor')), 'visitor');
-const newMember = r => require.ensure([], () => r(require('@/page/newMember')), 'newMember');
 const uploadImg = r => require.ensure([], () => r(require('@/page/uploadImg')), 'uploadImg');
 const vueEdit = r => require.ensure([], () => r(require('@/page/vueEdit')), 'vueEdit');
 const adminSet = r => require.ensure([], () => r(require('@/page/adminSet')), 'adminSet');
 const sendMessage = r => require.ensure([], () => r(require('@/page/sendMessage')), 'sendMessage');
 const explain = r => require.ensure([], () => r(require('@/page/explain')), 'explain');
 
+// wjh kaifa
+//模型部署
+const newMember = r => require.ensure([], () => r(require('@/page/newMember')), 'modelApply');
+
 const routes = [
+	
 	{
 		path: '/',
 		component: login
@@ -46,7 +50,7 @@ const routes = [
 		},{
 			path: '/map',
 			component: map,
-			meta: ['数据管理', '地图'],
+			meta: ['数据管理', '地图1'],
 		},{
 			path: '/mapB',
 			component: mapB,
@@ -54,7 +58,7 @@ const routes = [
 		},{
 			path: '/shopList',
 			component: shopList,
-			meta: ['数据管理', '商家列表'],
+			meta: ['系统运维', '故障上报配置'],
 		},{
 			path: '/orderList',
 			component: orderList,
@@ -62,11 +66,15 @@ const routes = [
 		},{
 			path: '/sshlogin',
 			component: sshlogin,
-			meta: ['终端管理', '终端登录'],
+			meta: ['系统运维', '终端登录'],
 		},{
 			path: '/ssh',
 			component: ssh,
-			meta: ['数据管理', '终端窗口'],
+			meta: ['系统运维', '终端窗口'],
+		},
+		{
+			path : '/newMember',
+			component:newMember
 		},
 		{
 			path: '/visitor',
@@ -83,7 +91,7 @@ const routes = [
 		},{
 			path: '/vueEdit',
 			component: vueEdit,
-			meta: ['编辑', '文本编辑'],
+			meta: ['模型定性', '一键验证'],
 		},{
 			path: '/adminSet',
 			component: adminSet,

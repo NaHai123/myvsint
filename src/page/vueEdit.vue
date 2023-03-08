@@ -1,127 +1,392 @@
 <template>
     <div>
-		<section class="data_section">
-			<el-col :span="6"><div class="data_list today_head" style="padding:10px;background:#00BFFF;"><span class="data_num head">配置数据源</span></div></el-col>
-			<el-col :span="6"><div class="data_list today_head" style="padding:10px;background:#AAAAAA;"><span class="data_num head">配置解析方式</span></div></el-col>
-			<el-col :span="6"><div class="data_list today_head" style="padding:10px;background:#AAAAAA;"><span class="data_num head">结果确认</span></div></el-col>
-			<el-col :span="6"><div class="data_list today_head" style="padding:10px;background:#AAAAAA;"><span class="data_num head">加入环境</span></div></el-col>
-		</section>
+        <head-top></head-top>
+        <el-row style="margin-top: 20px;">
+  			<el-col :span="12" :offset="4">
+		        <el-form :model="formData" :rules="rules" ref="formData" label-width="110px" class="demo-formData">
+					
+				
+					<el-table
+					    :data="activities"
+					    style="min-width: 600px;margin-bottom: 20px;"
+						align="cneter"
+					    :row-class-name="tableRowClassName">
+					    <el-table-column
+					      prop="icon_name"
+					      label="已有配置"
+					      align="cneter"
+					      width="120">
+					    </el-table-column>
+					    <el-table-column
+					      prop="name"
+					      label="配置名称"
+					      align="cneter"
+					      width="120">
+					    </el-table-column>
+					    <el-table-column
+					      prop="description"
+					      align="cneter"
+					      label="配置详情">
+					    </el-table-column>
+					    <el-table-column
+					    	label="操作"
+					    	width="120">
+					    <template slot-scope="scope">
+					        <el-button
+					          size="small"
+					          type="primary"
+                              @click="submitForm('formData')"
+                              >使用</el-button>
+					    </template>
+					    </el-table-column>
+					</el-table>
+					<el-form-item label="模型文件路径" prop="name">
+						<el-input ></el-input>
+					</el-form-item>
+					<el-form-item label="输出文件路径" prop="address">
+						<el-autocomplete
+						  v-model="formData.address"
+						  :fetch-suggestions="querySearchAsync"
+						  placeholder="请指定到具体文件名"
+						  style="width: 100%;"
+						  @select="addressSelect"
+						></el-autocomplete>
+					</el-form-item>
 
-		<section class="data_section">
-		      <el-col :span="4"><div class="data_list today_head"><span class="data_num head">基础信息：</span></div></el-col>
-		      <br><br>
-		      <form>
-                 <span style="margin-left:0%;font-size: 20px;padding: 4px;">
-                       环境名称:</span>
-                       <input type="text" name="环境名称" style="margin-left:2%;border-style: solid;width:500px;">
-                       <br>
-                       <br>
-              </form>
-              <form action="">
-                   <span style="margin-left:0%;font-size: 20px;padding: 4px;">配置方式:</span>
-                   <input style="margin-left:2%;" type="radio" name="sex" value="male"><span style="font-size: 20px;padding: 4px;">一键配置(conda支持)</span>
-                   <input style="margin-left:2%;" type="radio" name="sex" value="female"><span style="font-size: 20px;padding: 4px;">打包上传</span>
-              </form>
-		      <form>
-		         <br>
-                 <span style="margin-left:0%;font-size: 20px;padding: 4px;">
-                       请输入conda配置标准库名:版本号</span>
-                       <input type="text" name="环境名称" placeholder="包请用#分割 例如 torch:3.6#numpy:3.5" style="margin-left:2%;border-style: solid;width:500px;">
-                       <br>
-                       <br>
-              </form>
-		</section>
-
-		<section class="data_section">
-		      <el-col :span="4"><div class="data_list today_head"><span class="data_num head">高级选项：</span></div></el-col>
-		      <br><br>
-		      <form>
-                 <span style="margin-left:0%;font-size: 20px;padding: 4px;">
-                       高级设置1(待定):</span>
-                       <input type="text" name="环境名称" style="margin-left:2%;border-style: solid;width:500px;">
-                       <br>
-                       <br>
-              </form>
-              <form action="">
-                   <span style="margin-left:0%;font-size: 20px;padding: 4px;">高级设置2(待定):</span>
-                   <input style="margin-left:2%;" type="radio" name="sex" value="male"><span style="font-size: 20px;padding: 4px;">a</span>
-                   <input style="margin-left:2%;" type="radio" name="sex" value="female"><span style="font-size: 20px;padding: 4px;">b</span>
-              </form>
-		</section>
+					<el-form-item class="button_submit">
+						<el-button type="primary" @click="submitForm('formData')">开始分析</el-button>
+					</el-form-item>
+				</el-form>
+  			</el-col>
+  		</el-row>
     </div>
 </template>
 
 <script>
-    import headTop from '../components/headTop'
-    import { quillEditor } from 'vue-quill-editor'
-
+    import headTop from '@/components/headTop'
+    import {baseUrl, baseImgPath} from '@/config/env'
     export default {
-        data(){
-            return {
-                content: '<h3>文本编辑</h3>',
-			    editorOption: {
+    	data(){
+    		return {
+    			city: {},
+    			formData: {
+					name: '', //店铺名称
+					address: '', //地址
+					latitude: '',
+					longitude: '',
+					description: '', //介绍
+					phone: '',
+					promotion_info: '',
+					float_delivery_fee: 5, //运费
+					float_minimum_order_amount: 20, //起价
+					is_premium: true,
+					delivery_mode: true,
+					new: true,
+					bao: true,
+					zhun: true,
+					piao: true,
+					startTime: '',
+       	 			endTime: '',
+       	 			image_path: '',
+       	 			business_license_image: '',
+       	 			catering_service_license_image: '',
 
-		        }
-            }
-        },
+		        },
+		        rules: {
+					name: [
+						{ required: true,message: '请输入环境名称', trigger: 'blur' },
+					],
+					address: [
+						{ required: true, message: '请输入conda配置标准库名:版本号', trigger: 'blur' }
+					],
+					phone: [
+						{ required: true, message: '请输入高级设置1' },
+						{ type: 'number', message: '电话号码必须是数字' }
+					],
+				},
+				options: [{
+		          	value: '选项1',
+		          	label: '选项1'
+		        }, {
+		          	value: '选项2',
+		          	label: '选项2'
+		        }, {
+		          	value: '选项3',
+		          	label: '选项3'
+		        }, {
+		          	value: '选项4',
+		          	label: '选项5'
+		        }],
+       	 		activityValue: '选项1',
+				activities: [{
+		        	icon_name: '1',
+		        	name: 'LMoE多专家预报',
+		        	description: 'LMoE',
+			    },{
+		        	icon_name: '2',
+		        	name: 'ADSNet雷电预报模型',
+		        	description: 'ADSNet',
+			    },{
+		        	icon_name: "3",
+		        	name: 'LightNet雷电预报模型',
+		        	description: 'LightNet',
+			    }],
+			    
+    		}
+    	},
     	components: {
     		headTop,
-    		quillEditor,
     	},
-        computed: {
-          	editor() {
-	        	return this.$refs.myQuillEditor.quill
-	      	}
-        },
-        methods: {
-		    onEditorReady(editor) {
-		        console.log('editor ready!', editor)
+    	mounted(){
+    		this.initData();
+    	},
+    	methods: {
+    		async initData(){
+    			try{
+    				this.city = await cityGuess();
+    				const categories = await foodCategory();
+    				categories.forEach(item => {
+    					if (item.sub_categories.length) {
+    						const addnew = {
+    							value: item.name,
+						        label: item.name,
+						        children: []
+    						}
+    						item.sub_categories.forEach((subitem, index) => {
+    							if (index == 0) {
+    								return
+    							}
+    							addnew.children.push({
+    								value: subitem.name,
+						        	label: subitem.name,
+    							})
+    						})
+    						this.categoryOptions.push(addnew)
+
+    					}
+    				})
+    			}catch(err){
+    				console.log(err);
+    			}
+    		},
+    		async querySearchAsync(queryString, cb) {
+    			if (queryString) {
+	    			try{
+	    				const cityList = await searchplace(this.city.id, queryString);
+	    				if (cityList instanceof Array) {
+		    				cityList.map(item => {
+		    					item.value = item.address;
+		    					return item;
+		    				})
+		    				cb(cityList)
+	    				}
+	    			}catch(err){
+	    				console.log(err)
+	    			}
+    			}
 		    },
-		    submit(){
-                console.log(this.content);
-                this.$message.success('提交成功！');
-            }
-        },
+		    addressSelect(address){
+		    	this.formData.latitude = address.latitude;
+		    	this.formData.longitude = address.longitude;
+		    	console.log(this.formData.latitude, this.formData.longitude)
+		    },
+			handleShopAvatarScucess(res, file) {
+				if (res.status == 1) {
+					this.formData.image_path = res.image_path;
+				}else{
+					this.$message.error('上传图片失败！');
+				}
+			},
+
+            changeButtonStyle(res, file) {
+				// 待开发 todo
+			},
+			handleBusinessAvatarScucess(res, file) {
+				if (res.status == 1) {
+					this.formData.business_license_image = res.image_path;
+				}else{
+					this.$message.error('上传图片失败！');
+				}
+			},
+			handleServiceAvatarScucess(res, file) {
+				if (res.status == 1) {
+					this.formData.catering_service_license_image = res.image_path;
+				}else{
+					this.$message.error('上传图片失败！');
+				}
+			},
+			beforeAvatarUpload(file) {
+				const isRightType = (file.type === 'image/jpeg') || (file.type === 'image/png');
+				const isLt2M = file.size / 1024 / 1024 < 2;
+
+				if (!isRightType) {
+					this.$message.error('上传头像图片只能是 JPG 格式!');
+				}
+				if (!isLt2M) {
+					this.$message.error('上传头像图片大小不能超过 2MB!');
+				}
+				return isRightType && isLt2M;
+			},
+			tableRowClassName(row, index) {
+		        if (index === 1) {
+		        	return 'info-row';
+		        } else if (index === 3) {
+		        	return 'positive-row';
+		        }
+		        return '';
+		    },
+		    selectActivity(){
+		    	this.$prompt('请输入活动详情', '提示', {
+		          	confirmButtonText: '确定',
+		          	cancelButtonText: '取消',
+		        }).then(({ value }) => {
+		        	if (value == null) {
+		        		this.$message({
+				            type: 'info',
+				            message: '请输入活动详情'
+				        });
+		        		return
+		        	}
+		          	let newObj = {};
+		          	switch(this.activityValue){
+		          		case '满减优惠':
+		          			newObj= {
+		          				icon_name: '减',
+					        	name: '满减优惠',
+					        	description: value,
+		          			}
+		          			break;
+		          		case '优惠大酬宾':
+		          			newObj= {
+		          				icon_name: '特',
+					        	name: '优惠大酬宾',
+					        	description: value,
+		          			}
+		          			break;
+		          		case '新用户立减':
+		          			newObj= {
+		          				icon_name: '新',
+					        	name: '新用户立减',
+					        	description: value,
+		          			}
+		          			break;
+		          		case '进店领券':
+		          			newObj= {
+		          				icon_name: '领',
+					        	name: '进店领券',
+					        	description: value,
+		          			}
+		          			break;
+		          	}
+		          	this.activities.push(newObj);
+		        }).catch(() => {
+		          	this.$message({
+		            	type: 'info',
+		            	message: '取消输入'
+		          	});
+		        });
+		    },
+		    handleDelete(index){
+		    	this.activities.splice(index, 1)
+		    },
+		    submitForm(formName) {
+				this.$refs[formName].validate(async (valid) => {
+					if (valid) {
+						Object.assign(this.formData, {activities: this.activities}, {
+							category: this.selectedCategory.join('/')
+						})
+						try{
+							let result = await addShop(this.formData);
+							if (result.status == 1) {
+								this.$message({
+					            	type: 'success',
+					            	message: '添加成功'
+					          	});
+					          	this.formData = {
+									name: '', //店铺名称
+									address: '', //地址
+									latitude: '',
+									longitude: '',
+									description: '', //介绍
+									phone: '',
+									promotion_info: '',
+									float_delivery_fee: 5, //运费
+									float_minimum_order_amount: 20, //起价
+									is_premium: true,
+									delivery_mode: true,
+									new: true,
+									bao: true,
+									zhun: true,
+									piao: true,
+									startTime: '',
+				       	 			endTime: '',
+				       	 			image_path: '',
+				       	 			business_license_image: '',
+				       	 			catering_service_license_image: '',
+						        };
+						        this.selectedCategory = ['快餐便当', '简餐'];
+						        this.activities = [{
+						        	icon_name: '减',
+						        	name: '满减优惠',
+						        	description: '满30减5，满60减8',
+							    }];
+							}else{
+								this.$message({
+					            	type: 'error',
+					            	message: result.message
+					          	});
+							}
+							console.log(result)
+						}catch(err){
+							console.log(err)
+						}
+					} else {
+						this.$notify.error({
+							title: '错误',
+							message: '请检查输入是否正确',
+							offset: 100
+						});
+						return false;
+					}
+				});
+			},
+		}
     }
 </script>
 
 <style lang="less">
 	@import '../style/mixin';
-	.data_section{
-		padding: 20px;
-		margin-bottom: 40px;
-		.section_title{
-			text-align: center;
-			font-size: 30px;
-			margin-bottom: 10px;
-		}
-		.data_list{
-			text-align: center;
-			font-size: 14px;
-			color: #666;
-            border-radius: 6px;
-            background: #E5E9F2;
-            .data_num{
-                color: #333;
-                font-size: 26px;
-
-            }
-            .head{
-                border-radius: 6px;
-                font-size: 22px;
-                padding: 4px 0;
-                color: #fff;
-                display: inline-block;
-            }
-        }
-        .today_head{
-            background: #FF9800;
-        }
-        .all_head{
-            background: #20A0FF;
-        }
+	.button_submit{
+		text-align: center;
 	}
-    .wan{
-        .sc(16px, #333)
-    }
+	.avatar-uploader .el-upload {
+	    border: 1px dashed #d9d9d9;
+	    border-radius: 6px;
+	    cursor: pointer;
+	    position: relative;
+	    overflow: hidden;
+	}
+	.avatar-uploader .el-upload:hover {
+	    border-color: #20a0ff;
+	}
+	.avatar-uploader-icon {
+	    font-size: 28px;
+	    color: #8c939d;
+	    width: 120px;
+	    height: 120px;
+	    line-height: 120px;
+	    text-align: center;
+	}
+	.avatar {
+	    width: 120px;
+	    height: 120px;
+	    display: block;
+	}
+	.el-table .info-row {
+	    background: #c9e5f5;
+	}
+
+	.el-table .positive-row {
+	    background: #e2f0e4;
+	}
 </style>

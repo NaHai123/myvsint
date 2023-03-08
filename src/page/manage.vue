@@ -4,29 +4,39 @@
 	  		<el-col :span="4"  style="min-height: 100%; background-color: #324057;">
 				<el-menu text-align:Left:default-active="defaultActive" style="min-height: 100%;" theme="dark" router>
 					<el-menu-item index="manage"><i class="el-icon-menu"></i>服务器数据概览</el-menu-item>
+					
+					
 					<el-submenu index="2">
-						<template slot="title"><i class="el-icon-document"></i>模型应用中心</template>
-						<el-menu-item index="map">历史雷电预测情况</el-menu-item>
-						<el-menu-item index="mapB">未来12小时雷电预测</el-menu-item>
-						<el-menu-item index="sshlogin">ssh登陆信息</el-menu-item>
-					    <el-menu-item index="ssh">终端界面</el-menu-item>
-					</el-submenu>
-					<el-submenu index="3">
-						<template slot="title"><i class="el-icon-plus"></i>模型部署</template>
-						<el-menu-item index="addShop">模型部署</el-menu-item>
-					</el-submenu>
-					<el-submenu index="4">
 						<template slot="title"><i class="el-icon-star-on"></i>模型训练监控</template>
+						<el-menu-item index="addShop">训练环境配置</el-menu-item>
 						<el-menu-item index="visitor">模型训练监控</el-menu-item>
 						<!-- <el-menu-item index="newMember">用户数据</el-menu-item> -->
 					</el-submenu>
-					<el-submenu index="5">
-						<template slot="title"><i class="el-icon-edit"></i>设备管理</template>
+
+					<el-submenu index="3">
+						<template slot="title"><i class="el-icon-edit"></i>模型定性分析</template>
 						<!-- <el-menu-item index="uploadImg">上传图片</el-menu-item> -->
-						<el-menu-item index="vueEdit">模型部署</el-menu-item>
+						<el-menu-item index="vueEdit">模型效果验证</el-menu-item>
 					</el-submenu>
+
+					<el-submenu index="4">
+						<template slot="title"><i class="el-icon-document"></i>模型输出可视化</template>
+						<el-menu-item index="newMember">模型部署页面</el-menu-item>
+						<el-menu-item index="map">历史雷电预测情况</el-menu-item>
+						<el-menu-item index="mapB">未来12小时雷电预测</el-menu-item>
+						
+					</el-submenu>
+					<el-submenu index="5">
+						<template slot="title"><i class="el-icon-plus"></i>系统运维服务</template>
+						<el-menu-item index="sshlogin">ssh登陆信息</el-menu-item>
+					    <el-menu-item index="ssh">终端界面</el-menu-item>
+						<el-menu-item index="shopList">系统日志配置</el-menu-item>
+
+					</el-submenu>
+
+
 					<el-submenu index="6">
-						<template slot="title"><i class="el-icon-setting"></i>系统管理员</template>
+						<template slot="title"><i class="el-icon-setting"></i>用户信息</template>
 						<el-menu-item index="adminSet">管理员设置</el-menu-item>
 						<!-- <el-menu-item index="sendMessage">发送通知</el-menu-item> -->
 					</el-submenu>

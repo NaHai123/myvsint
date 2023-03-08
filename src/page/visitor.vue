@@ -101,7 +101,7 @@ height:1000px;
           </div>
           <div style="width: 40%;height: 42%;float: left;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);margin-left:5px;margin-top:5px">
                <button style="border-radius: 50px;width: 15%;height: 10%;margin-left:10px;margin-top:5px;background-color:#00CCFF;" type="button">
-               终止训练
+               训练中
                </button>
                <div style="width: 45%;color:black;height: 80%;line-height:2.5;border-radius:5px;background-color:rgba(255,255,255,0.4);margin-left:10px;text-align:left;border-style: solid;margin-top:10px">
                模型名称：{{kind}}</br>

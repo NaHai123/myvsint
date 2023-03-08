@@ -10,7 +10,7 @@
 					<el-form-item label="环境名称" prop="name">
 						<el-input ></el-input>
 					</el-form-item>
-					<el-form-item label="配置标准库" prop="address">
+					<el-form-item label="首次创建环境必填" prop="address">
 						<el-autocomplete
 						  v-model="formData.address"
 						  :fetch-suggestions="querySearchAsync"
@@ -22,15 +22,8 @@
 					<el-form-item label="模型名称" prop="phone">
 						<el-input v-model.number="formData.phone" maxLength="11"></el-input>
 					</el-form-item>
-					<el-form-item label="需要添加的包（若无则为空）" prop="description">
-						<el-input v-model="formData.description"></el-input>
-					</el-form-item>
-					<el-form-item label="信息上报手机号" prop="description">
-						<el-input v-model="formData.description"></el-input>
-					</el-form-item>
-					<el-form-item label="信息上报邮箱" prop="description">
-						<el-input v-model="formData.description"></el-input>
-					</el-form-item>
+					
+					
 					<el-form-item label="高级设置5" style="white-space: nowrap;">
 						<span>是否开启训练完成提醒</span>
 						<el-switch on-text="" off-text="" v-model="formData.is_premium"></el-switch>
@@ -39,27 +32,6 @@
 					</el-form-item>
 					
 					
-					<el-form-item label="告警触发时间" style="white-space: nowrap;">
-						<el-time-select
-							placeholder="起始时间"
-							v-model="formData.startTime"
-							:picker-options="{
-							start: '05:30',
-							step: '00:15',
-							end: '23:30'
-							}">
-						</el-time-select>
-						<el-time-select
-							placeholder="结束时间"
-							v-model="formData.endTime"
-							:picker-options="{
-							start: '05:30',
-							step: '00:15',
-							end: '23:30',
-							minTime: formData.startTime
-							}">
-						</el-time-select>
-					</el-form-item>
 
 				
 					<el-table
