@@ -4,8 +4,11 @@
         <el-row style="margin-top: 20px;">
   			<el-col :span="12" :offset="4">
 		        <el-form :model="formData" :rules="rules" ref="formData" label-width="110px" class="demo-formData">
+					<el-form-item label="配置名称" prop="name">
+						<el-input v-model="formData.name" v-input="LMoE多专家预报"></el-input>
+					</el-form-item>
 					<el-form-item label="环境名称" prop="name">
-						<el-input v-model="formData.name"></el-input>
+						<el-input ></el-input>
 					</el-form-item>
 					<el-form-item label="配置标准库" prop="address">
 						<el-autocomplete
@@ -16,45 +19,27 @@
 						  @select="addressSelect"
 						></el-autocomplete>
 					</el-form-item>
-					<el-form-item label="高级设置1" prop="phone">
+					<el-form-item label="模型名称" prop="phone">
 						<el-input v-model.number="formData.phone" maxLength="11"></el-input>
 					</el-form-item>
-					<el-form-item label="高级设置2" prop="description">
+					<el-form-item label="需要添加的包（若无则为空）" prop="description">
 						<el-input v-model="formData.description"></el-input>
 					</el-form-item>
-					<el-form-item label="高级设置3" prop="promotion_info">
-						<el-input v-model="formData.promotion_info"></el-input>
+					<el-form-item label="信息上报手机号" prop="description">
+						<el-input v-model="formData.description"></el-input>
 					</el-form-item>
-					<el-form-item label="高级设置4">
-						<el-cascader
-						  :options="categoryOptions"
-						  v-model="selectedCategory"
-						  change-on-select
-						></el-cascader>
+					<el-form-item label="信息上报邮箱" prop="description">
+						<el-input v-model="formData.description"></el-input>
 					</el-form-item>
 					<el-form-item label="高级设置5" style="white-space: nowrap;">
-						<span>选项1</span>
+						<span>是否开启训练完成提醒</span>
 						<el-switch on-text="" off-text="" v-model="formData.is_premium"></el-switch>
-						<span>选项2</span>
+						<span>是否开启训练异常上报</span>
 						<el-switch on-text="" off-text="" v-model="formData.delivery_mode"></el-switch>
-						<span>选项3</span>
-						<el-switch on-text="" off-text="" v-model="formData.new"></el-switch>
 					</el-form-item>
-					<el-form-item style="white-space: nowrap;">
-						<span>选项4</span>
-						<el-switch on-text="" off-text="" v-model="formData.bao"></el-switch>
-						<span>选项5</span>
-						<el-switch on-text="" off-text="" v-model="formData.zhun"></el-switch>
-						<span>选项6</span>
-						<el-switch on-text="" off-text="" v-model="formData.piao"></el-switch>
-					</el-form-item>
-					<el-form-item label="分配存储大小" prop="float_delivery_fee">
-						<el-input-number v-model="formData.float_delivery_fee" :min="0" :max="20"></el-input-number>
-					</el-form-item>
-					<el-form-item label="分配内存大小" prop="float_minimum_order_amount">
-						<el-input-number v-model="formData.float_minimum_order_amount" :min="0" :max="100"></el-input-number>
-					</el-form-item>
-					<el-form-item label="训练数据时间区间" style="white-space: nowrap;">
+					
+					
+					<el-form-item label="告警触发时间" style="white-space: nowrap;">
 						<el-time-select
 							placeholder="起始时间"
 							v-model="formData.startTime"
@@ -76,49 +61,7 @@
 						</el-time-select>
 					</el-form-item>
 
-					<el-form-item label="上传雷电数据">
-						<el-upload
-						  class="avatar-uploader"
-						  :action="baseUrl + '/v1/addimg/shop'"
-						  :show-file-list="false"
-						  :on-success="handleShopAvatarScucess"
-						  :before-upload="beforeAvatarUpload">
-						  <img v-if="formData.image_path" :src="baseImgPath + formData.image_path" class="avatar">
-						  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-						</el-upload>
-					</el-form-item>
-					<el-form-item label="上传训练权重">
-						<el-upload
-						  class="avatar-uploader"
-						  :action="baseUrl + '/v1/addimg/shop'"
-						  :show-file-list="false"
-						  :on-success="handleBusinessAvatarScucess"
-						  :before-upload="beforeAvatarUpload">
-						  <img v-if="formData.business_license_image" :src="baseImgPath + formData.business_license_image" class="avatar">
-						  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-						</el-upload>
-					</el-form-item>
-					<el-form-item label="上传训练模型">
-						<el-upload
-						  class="avatar-uploader"
-						  :action="baseUrl + '/v1/addimg/shop'"
-						  :show-file-list="false"
-						  :on-success="handleServiceAvatarScucess"
-						  :before-upload="beforeAvatarUpload">
-						  <img v-if="formData.catering_service_license_image" :src="baseImgPath + formData.catering_service_license_image" class="avatar">
-						  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-						</el-upload>
-					</el-form-item>
-					<el-form-item label="高级设置6">
-						<el-select v-model="activityValue" @change="selectActivity" :placeholder="activityValue">
-						    <el-option
-						      	v-for="item in options"
-						      	:key="item.value"
-						      	:label="item.label"
-						      	:value="item.value">
-						    </el-option>
-						</el-select>
-					</el-form-item>
+				
 					<el-table
 					    :data="activities"
 					    style="min-width: 600px;margin-bottom: 20px;"
@@ -145,10 +88,11 @@
 					    	label="操作"
 					    	width="120">
 					    <template slot-scope="scope">
+					
 					        <el-button
 					          size="small"
 					          type="danger"
-					          @click="handleDelete(scope.$index)">删除</el-button>
+					         >复用</el-button>
 					    </template>
 					    </el-table-column>
 					</el-table>
@@ -194,7 +138,7 @@
 		        },
 		        rules: {
 					name: [
-						{ required: true, message: '请输入环境名称', trigger: 'blur' },
+						{ required: true,message: '请输入环境名称', trigger: 'blur' },
 					],
 					address: [
 						{ required: true, message: '请输入conda配置标准库名:版本号', trigger: 'blur' }
@@ -219,14 +163,19 @@
 		        }],
        	 		activityValue: '选项1',
 				activities: [{
-		        	icon_name: '模型1',
-		        	name: '大创雷电预测配置',
-		        	description: '基于深度学习的机理与数据融合灾害性天气预报',
+		        	icon_name: '1',
+		        	name: 'LMoE多专家预报',
+		        	description: 'LMoE',
+			    },{
+		        	icon_name: '2',
+		        	name: 'ADSNet雷电预报模型',
+		        	description: 'ADSNet',
+			    },{
+		        	icon_name: "3",
+		        	name: 'LightNet雷电预报模型',
+		        	description: 'LightNet',
 			    }],
-			    baseUrl,
-			    baseImgPath,
-			    categoryOptions: [],
-			    selectedCategory: ['快餐便当', '简餐']
+			    
     		}
     	},
     	components: {

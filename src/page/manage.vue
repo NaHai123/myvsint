@@ -8,8 +8,6 @@
 						<template slot="title"><i class="el-icon-document"></i>模型应用中心</template>
 						<el-menu-item index="map">历史雷电预测情况</el-menu-item>
 						<el-menu-item index="mapB">未来12小时雷电预测</el-menu-item>
-						<!-- <el-menu-item index="shopList">商家列表</el-menu-item>
-						<el-menu-item index="orderList">订单列表</el-menu-item>  -->
 						<el-menu-item index="sshlogin">ssh登陆信息</el-menu-item>
 					    <el-menu-item index="ssh">终端界面</el-menu-item>
 					</el-submenu>

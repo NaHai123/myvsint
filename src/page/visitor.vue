@@ -29,33 +29,33 @@ height:1000px;
 
           <div style="width: 25%;height: 85%;float: left;border-style: solid;background-color:rgba(255,255,255,0.1);border-color: black;margin-left:80px">
                  <div style="height:5%;text-align:left;;color:white;font-size:150%;margin-left:10px" font-size:40px>
-                          模型列表
+                          配置列表
                  </div>
-                 <div style="float:left;color:white;margin-top:10px;width:30%">
-                 模型名称：
-                 </div>
-                <input type="search" name="" id="" style="width:100px;height:30px;border-style: solid;border-color:black;margin:5px">
-                        <button type="button" style="width:40px;height:20px;background-color:#00CCFF;">搜索</button>
+             
                <details style="color:white;text-align:left">
                        <summary>全部</summary>
                        <ol>
-                           <li>Net1</li>
-                           <li>Net2</li>
-                           <li>Net3</li>
+
+                        <li>LMoE多专家集成预报模型</li>
+                           <li>ADSNet雷电预报模型</li>
+                           <li>LightNet雷电预报模型</li>
+                           
+                           <li>PredRNN预报模型</li>
                        </ol>
                    </details>
                 <details style="color:white;text-align:left">
                         <summary>时间序列</summary>
                          <ol>
-                        <li>Adsnet</li>
-                        <li>Lightnet</li>
-
+                        <li>PredRNN预报模型</li>
+                     
                         </ol>
                </details>
 
           </div>
           <div style="width:40%;height: 42%;color:white;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);float: left;text-align:center;margin-left:5px">
-               <p style="height:5%;text-align:left;;color:white;font-size:150%;margin-left:10px" font-size:40px>{{name}}</p>
+              
+            <p style="height:5%;text-align:left;;color:white;font-size:150%;margin-left:10px" font-size:40px>{{name}}</p>
+
                <div style="width:25%;height: 20%;color:white;border-style: solid;border-color: rgba(255,255,255,0.1);background-color:rgba(255,255,80,0.1);float: left;text-align:center;margin-left:35px;margin-top:50px">
                epoch
                <div>
@@ -104,7 +104,7 @@ height:1000px;
                终止训练
                </button>
                <div style="width: 45%;color:black;height: 80%;line-height:2.5;border-radius:5px;background-color:rgba(255,255,255,0.4);margin-left:10px;text-align:left;border-style: solid;margin-top:10px">
-               模型分类：{{kind}}</br>
+               模型名称：{{kind}}</br>
                模型训练人：{{trainer}}</br>
                模型消耗资源：{{cost}}</br>
                模型运行状态：{{state}}</br>
@@ -156,11 +156,11 @@ return{
  h1:'historical data1',
  h2:"historical data2",
  h3:"historical data3",
- epoch:1,
+ epoch:50,
  memory:1,
  loss:1,
  curren:3,
- name:1
+
 }
 },
 created(){
