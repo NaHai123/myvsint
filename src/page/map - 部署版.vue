@@ -91,7 +91,7 @@ export default {
      //this.init();
      this.loadBMapLib();
      //2023-3-10新增，从后端获取已有数据文件名
-     this.$http.post("http://127.0.0.1:8000/apis/",
+     this.$http.post("http://101.43.203.170:13888/apis/",
            {'uid':100,     //0表示取真实数据，1表示取预测数据，100表示开始时读取后端数据文件列表
                   },
            {
@@ -145,7 +145,7 @@ export default {
       //this.init();
             console.log("正在读取选择时间的真实雷电数据")
             this.percent = 0   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数。 选择某时间数据显示时进度条置为0，因为进度条为轮播进度。
-            this.$http.post("http://127.0.0.1:8000/model1/",
+            this.$http.post("http://101.43.203.170:13888/model1/",
            {'uid':20,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             //'period':this.period[this.periodID]    指示后端读取时间段202007111600的npy文件 ykcs
             'period':this.selectDataFileName[0],
@@ -174,7 +174,7 @@ export default {
       this.backdata=[];
       this.predictPoints=[];
       //this.predictANDheatmap(this.baiduMap);
-     this.$http.post("http://127.0.0.1:8000/model1/",
+     this.$http.post("http://101.43.203.170:13888/model1/",
            {'uid':21,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             //'period':this.predictPeriod[this.predictPeriodID]    //指示后端读取对于预测时间段predictPeriodID的npy文件 ykcs
             'period':this.selectDataFileName[1],
@@ -273,7 +273,7 @@ export default {
 	*/
 	 //获取后端预测的天气数据
 	 this.predictPeriodID = (this.predictPeriodID+1)%this.backDataListLength
-     this.$http.post("http://127.0.0.1:8000/model1/",
+     this.$http.post("http://101.43.203.170:13888/model1/",
            {'uid':1,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             'period':this.predictPeriod[this.predictPeriodID]    //指示后端读取对于预测时间段predictPeriodID的npy文件 ykcs
             //'period':this.selectDataFileName[1]
@@ -429,7 +429,7 @@ export default {
             this.periodID = (this.periodID+1)%this.backDataListLength
             console.log("periodID"+" "+this.periodID);
             this.percent = Number((100*(this.periodID)/(this.backDataListLength-1)).toFixed(2))   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数
-            this.$http.post("http://127.0.0.1:8000/model1/",
+            this.$http.post("http://101.43.203.170:13888/model1/",
            {'uid':0,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             //'period':this.backDataList[this.periodID][0]    指示后端读取时间段202007111600的npy文件 ykcs
             'period':this.period[this.periodID]

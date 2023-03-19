@@ -6,27 +6,24 @@ Vue.use(Router)
 const login = r => require.ensure([], () => r(require('@/page/login')), 'login');
 const manage = r => require.ensure([], () => r(require('@/page/manage')), 'manage');
 const home = r => require.ensure([], () => r(require('@/page/home')), 'home');
-const addShop = r => require.ensure([], () => r(require('@/page/addShop')), 'addShop');
-const addGoods = r => require.ensure([], () => r(require('@/page/addGoods')), 'addGoods');
-const shopList = r => require.ensure([], () => r(require('@/page/shopList')), 'shopList');
+const trainingEnvironmentConfiguration = r => require.ensure([], () => r(require('@/page/trainingEnvironmentConfiguration')), 'trainingEnvironmentConfiguration');
+const systemLogConfiguration = r => require.ensure([], () => r(require('@/page/systemLogConfiguration')), 'systemLogConfiguration');
 const ssh = r => require.ensure([], () => r(require('@/page/ssh')), 'ssh');
-const orderList = r => require.ensure([], () => r(require('@/page/orderList')), 'orderList');
 const sshlogin = r => require.ensure([], () => r(require('@/page/sshlogin')), 'sshlogin');
 const map = r => require.ensure([], () => r(require('@/page/map')), 'map');
 const mapB = r => require.ensure([], () => r(require('@/page/mapB')), 'mapB');
 const visitor = r => require.ensure([], () => r(require('@/page/visitor')), 'visitor');
-const uploadImg = r => require.ensure([], () => r(require('@/page/uploadImg')), 'uploadImg');
-const vueEdit = r => require.ensure([], () => r(require('@/page/vueEdit')), 'vueEdit');
+const modelEffectVerification = r => require.ensure([], () => r(require('@/page/modelEffectVerification')), 'modelEffectVerification');
 const adminSet = r => require.ensure([], () => r(require('@/page/adminSet')), 'adminSet');
 const sendMessage = r => require.ensure([], () => r(require('@/page/sendMessage')), 'sendMessage');
 const explain = r => require.ensure([], () => r(require('@/page/explain')), 'explain');
 
 // wjh kaifa
 //模型部署
-const newMember = r => require.ensure([], () => r(require('@/page/newMember')), 'modelApply');
+const modelDeployment = r => require.ensure([], () => r(require('@/page/modelDeployment')), 'modelApply');
 
 const routes = [
-	
+
 	{
 		path: '/',
 		component: login
@@ -40,13 +37,9 @@ const routes = [
 			component: home,
 			meta: [],
 		},{
-			path: '/addShop',
-			component: addShop,
+			path: '/trainingEnvironmentConfiguration',
+			component: trainingEnvironmentConfiguration,
 			meta: ['模型部署', '配置数据源'],
-		},{
-			path: '/addGoods',
-			component: addGoods,
-			meta: ['添加数据', '添加商品'],
 		},{
 			path: '/map',
 			component: map,
@@ -54,15 +47,11 @@ const routes = [
 		},{
 			path: '/mapB',
 			component: mapB,
-			meta: ['数据管理', '地图B'],
+			meta: ['数据管理', '地图2'],
 		},{
-			path: '/shopList',
-			component: shopList,
+			path: '/systemLogConfiguration',
+			component: systemLogConfiguration,
 			meta: ['系统运维', '故障上报配置'],
-		},{
-			path: '/orderList',
-			component: orderList,
-			meta: ['终端管理', '订单列表'],
 		},{
 			path: '/sshlogin',
 			component: sshlogin,
@@ -73,24 +62,20 @@ const routes = [
 			meta: ['系统运维', '终端窗口'],
 		},
 		{
-			path : '/newMember',
-			component:newMember
+			path : '/modelDeployment',
+			component:modelDeployment
 		},
 		{
 			path: '/visitor',
 			component: visitor,
 			meta: ['图表', '用户分布'],
 		},{
-			path: '/newMember',
-			component: newMember,
+			path: '/modelDeployment',
+			component: modelDeployment,
 			meta: ['图表', '用户数据'],
 		},{
-			path: '/uploadImg',
-			component: uploadImg,
-			meta: ['文本编辑', 'MarkDown'],
-		},{
-			path: '/vueEdit',
-			component: vueEdit,
+			path: '/modelEffectVerification',
+			component: modelEffectVerification,
 			meta: ['模型定性', '一键验证'],
 		},{
 			path: '/adminSet',
