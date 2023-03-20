@@ -7,40 +7,47 @@
     ></div>
     <router-view></router-view>
           <div style="position:absolute;z-index:2;margin-left:12px;margin-top:40%;width:82%;">
-            <span style="opacity:70%;padding:1px;background:#D0D0D0;" class="data_num head">
-            真实雷电数据日期时间：{{this.period[this.periodID]}},
+            <span style="border-radius: 40px;opacity:70%;color:white;padding:1px;background:#505050;" class="data_num head">
+            &nbsp;&nbsp;真实雷电数据日期时间：{{this.period[this.periodID]}},
             预测雷电数据日期时间：{{this.predictPeriod[this.predictPeriodID]}}
             </span>
-            <el-progress :text-inside="true" :stroke-width="30" :percentage="percent" />
+            <el-progress style="border-radius: 40px;opacity:70%;color:white;padding:1px;background:#505050;" :text-inside="true" :stroke-width="30" :percentage="percent" />
           </div>
 
           <el-col :span="4">
           <div class="data_list today_head"
-               style="padding:1px;background:#D8D8D8;opacity:70%;font-size: 40px;position:absolute;z-index:3;margin-top:2%;margin-left:4%;">
-                      <span class="data_num head">实时预测雷电发生情况：</span>
+               style="border-radius: 40px;padding:1px;color:white;background:#505050;opacity:70%;font-size: 40px;position:absolute;z-index:3;margin-top:2%;margin-left:4%;">
+                      <span class="data_num head">&nbsp;&nbsp;历史预测雷电发生情况：</span>
           </div></el-col>
-          <div style="padding:1px;background:#D8D8D8;opacity:70%;font-size: 35px;position:absolute;z-index:3;margin-top:5.8%;margin-left:4%;">
-               {{this.points.length}}
+          <div style="border-radius: 40px;padding:1px;color:white;background:#505050;opacity:70%;font-size: 35px;position:absolute;z-index:3;margin-top:5.8%;margin-left:4%;">
+               &nbsp;&nbsp;{{this.points.length}}&nbsp;&nbsp;
           </div>
           <div
-             style="width:35%;height:50%;padding:1px;background:#D8D8D8;opacity:70%;font-size: 40px;position:absolute;z-index:2;margin-top:9%;margin-left:4%;">
+             style="border-radius: 40px;width:35%;height:47%;padding:1px;background:#D0D0D0;opacity:70%;font-size: 40px;position:absolute;z-index:2;margin-top:9%;margin-left:4%;">
              <tendencyForMap :sevenDate='sevenDate' :sevenDay='sevenDay'></tendencyForMap>
           </div>
           <div>
-          <button style="color:white;position:absolute;z-index:2;font-size:20px;background:#0088FF;padding:10px;border-radius: 40px;"
-           v-on:click="pauseMap">暂停</button>
-          <button style="margin-left:4%;color:white;position:absolute;z-index:2;font-size:20px;background:#0088FF;padding:10px;border-radius: 40px;"
-           v-on:click="continueMap">继续</button>
+          <el-button type="primary" style="opacity:70%;color:white;position:absolute;z-index:2;font-size:20px;background:#505050;border-color:#808080;padding:10px;border-radius: 40px;"
+           v-on:click="pauseMap">暂停</el-button>
+          <el-button type="primary"  style="opacity:70%;margin-left:4%;color:white;position:absolute;z-index:2;font-size:20px;background:#505050;border-color:#808080;padding:10px;border-radius: 40px;"
+           v-on:click="continueMap">继续</el-button>
           </div>
 
-          <div>
-            <form style="color:white;margin-left:50%;;position:absolute;z-index:2;font-size:20px;background:#0088FF;padding:10px;border-radius: 40px;" >
-              <label for="time">选择时间序号（0~11）：</label>   <!-- 用来获取焦点 ，点击“账号：”后可以选中input框，它里面的for对应下面的id -->
-              <input type="number" id="time" v-model.trim="selectPeriodID">   <!-- 这里v-model收集的是input中输入的value值 , trim表示去掉输入框中前后的空格-->
-              <!--   <br />   换行-->
-              <button @click="selectTime">提交</button>
-            </form>
-          </div>
+
+<form style="opacity:70%;color:white;margin-left:50%;position:absolute;z-index:2;font-size:20px;background:#505050;border-color:#808080;padding:10px;border-radius: 40px;" method="post">
+     可选择展示历史数据时间：
+     <select v-model="selectModel">
+         <option value="LightNet">LightNet</option>
+         <option value="ADSNet">ADSNet</option>
+      </select>
+     <select v-if="selectModel==='LightNet'" v-model="selectDataFileName">
+         <option v-for="option in backDataList['LightNet']" :value="option">{{option[0].slice(0,4)}}年{{option[0].slice(4,6)}}月{{option[0].slice(6,8)}}日{{option[0].slice(8,10)}}时{{option[0].slice(10,12)}}分</option>
+      </select>
+      <select v-if="selectModel==='ADSNet'" v-model="selectDataFileName">
+         <option v-for="option in backDataList['ADSNet']" :value="option">{{option[0].slice(0,4)}}年{{option[0].slice(4,6)}}月{{option[0].slice(6,8)}}日{{option[0].slice(8,10)}}时{{option[0].slice(10,12)}}分</option>
+      </select>
+      <el-button type="primary" style="color:white;background:#383838;border-color:#808080;"  @click="selectTime">提交</el-button>
+</form>
 
 
   </div>
@@ -57,17 +64,23 @@ export default {
       predictPoints: [],     //存放预测经纬度坐标
       backdata:[],    //存放后端数据
       predictBackdata:[],    //存放预测后端数据
-      period:[202007111600,202007111700,202007111800,202007111900,202007112000,202007112100,202007112200,202007112300,202007120000,202007120100,202007120200,202007120300],   //存储要读取的真实数据的时间段
-      predictPeriod:["202007111650_h0","202007111750_h1","202007111850_h2","202007111950_h3","202007112050_h4","202007112150_h5","202007112250_h6","202007112350_h7","202007120050_h8","202007120150_h9","202007120250_h10","202007120350_h11"], //存储要读取的预测数据的时间段
+      period:[],
+      predictPeriod:[],
+      //period:[202007111600,202007111700,202007111800,202007111900,202007112000,202007112100,202007112200,202007112300,202007120000,202007120100,202007120200,202007120300],   //存储要读取的真实数据的时间段
+      //predictPeriod:["202007111650_h0","202007111750_h1","202007111850_h2","202007111950_h3","202007112050_h4","202007112150_h5","202007112250_h6","202007112350_h7","202007120050_h8","202007120150_h9","202007120250_h10","202007120350_h11"], //存储要读取的预测数据的时间段
       periodID:-1,    //用于period[periodID]取各时间段真实数据文件
-      selectPeriodID:-1,
+      selectPeriodID:1,
       predictPeriodID:-1,    //用于predictPeriod[predictPeriodID]取各时间段预测数据文件
       selectPredictPeriodID:-1,
       percent:0,          //用于进度条
       pause:0,             //1表示暂停，0表示运行
       sevenDay: ["0时\n0周\n0月","4时\n1周\n1月","8时\n2周\n2月","12时\n3周\n3月","16时\n4周\n4月","20时\n5周\n5月","24时(当前)\n6周(当前)\n6月(当前)"],      //用于map.vue的柱状图和折线图
       sevenDate: [[],[],[]],   //用于map.vue的柱状图和折线图
-      baiduMap : new window.BMap.Map(this.$refs.allmap), // 创建Map实例,默认普通地图
+      baiduMap:null,
+      backDataList:[],  //后端经纬度数据文件列表
+      backDataListLength:0,  //后端数据文件列表的预测、真实文件对数，用于轮播显示
+      selectModel:'',  //选择读取哪个模型的数据文件
+      selectDataFileName:[],   //选择读取的数据文件名
     }
   },
   //柱状图和折线图
@@ -77,12 +90,33 @@ export default {
     created(){
      //this.init();
      this.loadBMapLib();
+     //2023-3-10新增，从后端获取已有数据文件名
+     this.$http.post("http://127.0.0.1:8000/apis/",
+           {'uid':100,     //0表示取真实数据，1表示取预测数据，100表示开始时读取后端数据文件列表
+                  },
+           {
+              headers:{'Content-Type':'application/json'},
+              emulateJSON:true
+           }).then(
+              success=>{
+                 //this.backDataList=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 sessionStorage.setItem("getSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
+              }
+                  );
+                  console.log("后端数据文件列表及预测、真实文件对数")
+                  //后端经纬度数据文件列表添加进backDataList，预测、真实文件对数添加进
+                  this.backDataList = sessionStorage.getItem("getSuccess")
+                  this.backDataList = JSON.parse(this.backDataList)
+                  this.backDataListLength = Object.keys(this.backDataList['LightNet']).length + Object.keys(this.backDataList['ADSNet']).length  //轮播时不分模型，所以计算两个模型地数据总对数，模型只在选择时间显示时有用
+                  console.log(this.backDataList)
+                  console.log(this.backDataListLength)
   },
   methods: {
+  /*旧版selectTime()，选择0~11的序号
   selectTime(){
-      this.selectPredictPeriodID = this.selectPeriodID
-      this.periodID = this.selectPeriodID
-      this.predictPeriodID = this.selectPeriodID
+      this.selectPredictPeriodID = parseInt(this.selectPeriodID)-2  //this.selectPeriodID为字符串？？parseInt转换为数字
+      this.periodID = parseInt(this.selectPeriodID)-2
+      this.predictPeriodID = parseInt(this.selectPeriodID)-2
       this.baiduMap.clearOverlays();
       this.backdata=[];
       this.points=[];
@@ -93,6 +127,103 @@ export default {
       this.predictPoints=[];
       this.predictANDheatmap(this.baiduMap);
       this.ChartUpdate();
+      this.selectPredictPeriodID = parseInt(this.selectPeriodID)-2  //this.selectPeriodID为字符串？？parseInt转换为数字
+      this.periodID = parseInt(this.selectPeriodID)-2
+      this.predictPeriodID = parseInt(this.selectPeriodID)-2
+      this.pauseMap()
+  },
+  */
+  selectTime(){
+      console.log("选择显示的后端数据文件名称")
+      console.log(this.selectDataFileName)
+      //this.selectPredictPeriodID = parseInt(this.selectPeriodID)-2  //this.selectPeriodID为字符串？？parseInt转换为数字
+      //this.periodID = parseInt(this.selectPeriodID)-2
+      //this.predictPeriodID = parseInt(this.selectPeriodID)-2
+      this.baiduMap.clearOverlays();
+      this.backdata=[];
+      this.points=[];
+      //this.init();
+            console.log("正在读取选择时间的真实雷电数据")
+            this.percent = 0   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数。 选择某时间数据显示时进度条置为0，因为进度条为轮播进度。
+            this.$http.post("http://127.0.0.1:8000/model1/",
+           {'uid':20,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
+            //'period':this.period[this.periodID]    指示后端读取时间段202007111600的npy文件 ykcs
+            'period':this.selectDataFileName[0],
+            'selectModel': this.selectModel
+                  },
+           {
+              headers:{'Content-Type':'application/json'},
+              emulateJSON:true
+           }).then(
+              success=>{
+                 //this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 sessionStorage.setItem("success",success.data)  //存在问题：接收后端数据需刷新两次页面
+              }
+                  );
+                  //后端数据添加进points
+                  this.backdata=sessionStorage.getItem("success")
+                  this.backdata=JSON.parse(this.backdata)
+                  let position = new BMap.Point(this.backdata[0][0],this.backdata[0][1])
+           for (let c = 0; c < this.backdata.length; c++) {
+                  position = new BMap.Point(this.backdata[c][0],this.backdata[c][1])
+                  this.points.push(position)
+                  }
+
+      this.showPoly(this.points,this.baiduMap);
+      this.addZoomControl(this.baiduMap);
+      this.backdata=[];
+      this.predictPoints=[];
+      //this.predictANDheatmap(this.baiduMap);
+     this.$http.post("http://127.0.0.1:8000/model1/",
+           {'uid':21,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
+            //'period':this.predictPeriod[this.predictPeriodID]    //指示后端读取对于预测时间段predictPeriodID的npy文件 ykcs
+            'period':this.selectDataFileName[1],
+            'selectModel': this.selectModel
+                  },
+           {
+              headers:{'Content-Type':'application/json'},
+              emulateJSON:true
+           }).then(
+              success=>{
+                 //this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 sessionStorage.setItem("predictSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
+              }
+                  );
+                  //后端数据添加进points
+                  this.predictBackdata = sessionStorage.getItem("predictSuccess")
+                  this.predictBackdata = JSON.parse(this.predictBackdata)
+                  console.log("正在读取选择时间的预测雷电数据")
+
+                 for (let c = 0; c < this.predictBackdata.length; c++) {
+                  //!!!注意，此处增加了模拟数据，以用于前期展示。后期需删除掉点b 以及 a中的偏离!!!
+                  let a = {"lng":this.predictBackdata[c][0],"lat":this.predictBackdata[c][1],"count":50+Math.random()*150}
+                  let b = {"lng":this.predictBackdata[c][0]+Math.random(),"lat":this.predictBackdata[c][1]+Math.random(),"count":50+Math.random()*100}
+                  this.predictPoints.push(a)
+                  this.predictPoints.push(b)
+                  }
+
+	//开始添加热力图
+    var gradient = {
+    	0: 'rgb(102, 255, 0, 1)',         //0.7: 'rgb(0, 110, 255, 1)',   最后一位表示透明度，0为透明
+    	0.5: 'rgb(255, 170, 0, 1)',         //0.8: 'rgb(241, 175, 6, 1)',
+    	1: 'rgb(255, 0, 0, 1)'             //1: 'rgb(247, 46, 5, 1)'
+    };
+    let heatmapOverlay = new BMapLib.HeatmapOverlay({
+	    "radius": 20
+    });
+    this.baiduMap.addOverlay(heatmapOverlay);
+    heatmapOverlay.setDataSet({
+	    data: this.predictPoints,
+	    max: 200
+    });
+    heatmapOverlay.setOptions({
+	    "gradient": gradient
+    });
+
+      this.ChartUpdate();
+      //this.selectPredictPeriodID = parseInt(this.selectPeriodID)-2  //this.selectPeriodID为字符串？？parseInt转换为数字
+      //this.periodID = parseInt(this.selectPeriodID)-2
+      //this.predictPeriodID = parseInt(this.selectPeriodID)-2
       this.pauseMap()
   },
     //表格动态变化
@@ -141,10 +272,11 @@ export default {
 	map.setMapStyle(mapStyle);
 	*/
 	 //获取后端预测的天气数据
-	 this.predictPeriodID = (this.predictPeriodID+1)%12
+	 this.predictPeriodID = (this.predictPeriodID+1)%this.backDataListLength
      this.$http.post("http://127.0.0.1:8000/model1/",
-           {'uid':1,     //0表示取真实数据，1表示取预测数据
+           {'uid':1,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             'period':this.predictPeriod[this.predictPeriodID]    //指示后端读取对于预测时间段predictPeriodID的npy文件 ykcs
+            //'period':this.selectDataFileName[1]
                   },
            {
               headers:{'Content-Type':'application/json'},
@@ -294,12 +426,14 @@ export default {
     },
         //读取后端数据，本版本只接收后端一个经纬度。 //存在问题：接收后端数据需刷新两次页面！！！
         init(){
-            this.periodID = (this.periodID+1)%12
+            this.periodID = (this.periodID+1)%this.backDataListLength
             console.log("periodID"+" "+this.periodID);
-            this.percent = Number((100*(this.periodID)/11).toFixed(2))   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数
+            this.percent = Number((100*(this.periodID)/(this.backDataListLength-1)).toFixed(2))   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数
             this.$http.post("http://127.0.0.1:8000/model1/",
-           {'uid':0,     //0表示取真实数据，1表示取预测数据
-            'period':this.period[this.periodID]    //指示后端读取时间段202007111600的npy文件 ykcs
+           {'uid':0,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
+            //'period':this.backDataList[this.periodID][0]    指示后端读取时间段202007111600的npy文件 ykcs
+            'period':this.period[this.periodID]
+            //'period':this.selectDataFileName[0]
                   },
            {
               headers:{'Content-Type':'application/json'},
@@ -325,17 +459,29 @@ export default {
      //if ( this.pause == 0 )
      //{
       //var map = new window.BMap.Map(this.$refs.allmap,{mapType:BMAP_HYBRID_MAP}) // 创建Map实例,默认显示卫星地图
-      //var map = new window.BMap.Map(this.$refs.allmap) // 创建Map实例,默认普通地图
+      var map = new window.BMap.Map(this.$refs.allmap) // 创建Map实例,默认普通地图
+      this.baiduMap = map
       //this.map = map  //新增，使map可被其他位置使用
-      this.baiduMap.centerAndZoom(new window.BMap.Point(116.404, 39.915), 8) // 初始化地图,设置中心点坐标和地图级别
-      this.baiduMap.addControl(new window.BMap.MapTypeControl({ // 添加地图类型控件
+      map.centerAndZoom(new window.BMap.Point(116.404, 39.915), 8) // 初始化地图,设置中心点坐标和地图级别
+      map.addControl(new window.BMap.MapTypeControl({ // 添加地图类型控件
         mapTypes: [
           window.BMAP_NORMAL_MAP,
           window.BMAP_HYBRID_MAP,
         ]
       }))
-      this.baiduMap.setCurrentCity('四川省') // 设置地图显示的城市 此项是必须设置的
-      this.baiduMap.enableScrollWheelZoom(true)// 开启鼠标滚轮缩放
+      map.setCurrentCity('四川省') // 设置地图显示的城市 此项是必须设置的
+      map.enableScrollWheelZoom(true)// 开启鼠标滚轮缩放
+      /* 设置地图样式
+      map.setMapStyleV3({
+            styleId: 'b12c5211b047a1ccdd1fa247926d6692'
+          });
+      map.setMapStyle({
+            style:"dark"
+          });
+      */
+      map.setMapStyleV2({
+            styleId: 'b12c5211b047a1ccdd1fa247926d6692'
+          });
       //}
       //新增代码
       //标点
@@ -343,7 +489,7 @@ export default {
    if (this.timer && this.pause!=1){
           clearInterval(this.timer);
   }else {
-       this.timer = setInterval( ()=>{this.baiduMap.clearOverlays();this.backdata=[];this.points=[];this.init();this.showPoly(this.points,this.baiduMap);this.addZoomControl(this.baiduMap);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(this.baiduMap);this.ChartUpdate();},3000 );  //5000ms刷新一次
+       this.timer = setInterval( ()=>{map.clearOverlays();this.backdata=[];this.points=[];this.init();this.showPoly(this.points,map);this.addZoomControl(map);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(map);this.ChartUpdate();},3000 );  //5000ms刷新一次
   }
   }
  },
@@ -356,6 +502,15 @@ mounted () {
        this.timer = setInterval( ()=>{this.init();this.showPoly(this.points,this.map);},5000 );  //5000ms刷新一次
   }
    */
+   //console.log(this.backDataList[1])
+    for (let c = 1; c <= Object.keys(this.backDataList['LightNet']).length; c++) {
+                      this.period.push(this.backDataList['LightNet'][c][0])
+                      this.predictPeriod.push(this.backDataList['LightNet'][c][1])
+                  }
+    for (let c = 1; c <= Object.keys(this.backDataList['ADSNet']).length; c++) {
+                      this.period.push(this.backDataList['ADSNet'][c][0])
+                      this.predictPeriod.push(this.backDataList['ADSNet'][c][1])
+                  }
    this.map();
 },
 
