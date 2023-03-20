@@ -3,45 +3,85 @@
         <head-top></head-top>
         <el-row style="margin-top: 20px;">
   			<el-col :span="12" :offset="4">
-		        <el-form :model="formData" :rules="rules" ref="formData" label-width="110px" class="demo-formData">
-					
+		     
 					
 				
+				
+						<el-form :model="formData" :rules="rules" ref="formData" label-width="110px" class="demo-formData">
+						<el-form-item label="配置名称" required=true>
+							<el-input :disabled="true" value="LMoe多专家预报"></el-input>
+						</el-form-item>
+						
+
+					<el-form-item label="预报程序入口"  required=true>
+						<el-autocomplete
+						  v-model="modelMainPath.path"
+						  :fetch-suggestions="querySearchAsync"
+						  style="width: 100%;"
+						  @select="addressSelect"
+						></el-autocomplete>
+					</el-form-item>
+
+					<el-form-item label="预报产品输出地址" required=true>
+						<el-autocomplete
+						  v-model="Log.path"
+						  :fetch-suggestions="querySearchAsync"
+						  style="width: 100%;"
+						  @select="addressSelect"
+						></el-autocomplete>
+					</el-form-item>
+
 					<el-table
 					    :data="activities"
 					    style="min-width: 600px;margin-bottom: 20px;"
 						align="cneter"
-					    :row-class-name="tableRowClassName">
-					    <el-table-column
-					      prop="icon_name"
-					      label="已验证模型"
-					      align="cneter"
-					      width="120">
-					    </el-table-column>
+					   >
 					    <el-table-column
 					      prop="name"
-					      label="模型量化指标"
+					      label="配置名称"
 					      align="cneter"
 					      width="120">
 					    </el-table-column>
 					    <el-table-column
-					      prop="description"
+					      prop="score_name"
+					      label="配置指标名称"
 					      align="cneter"
-					      label="模型文件路径">
+					      width="120">
 					    </el-table-column>
-                        <el-table-column
-					      prop="type"
-					      align="type"
-					      label="模型部署状态">
+					    <el-table-column
+					      prop="score"
+					      align="cneter"
+					      label="指标数值">
 					    </el-table-column>
-                        
-					    
-
+					    <el-table-column
+					    	label="操作"
+					    	width="120">
+					    <template>
+					        <el-button
+					          size="small"
+					          type="submit"
+							  @select="selectButton"
+							  @click="selectButton"
+					         >确定</el-button>
+					    </template>
+					    </el-table-column>
 					</el-table>
-					<el-form-item class="button_submit">
-						<el-button type="primary" @click="submitForm('formData')">部署此模型</el-button>
-					</el-form-item>
+					<el-input :disabled="true" 
+				style="width: 100%;"
+				title="true " 
+				color="red"
+				contextmenu="center"
+				
+				value="注意，输出文件命名里不能包含出年月日以外的命名数字，
+				一个正确的文件输出名 201512121200.xxx"></el-input>
+				 
+					        <el-button
+					          size="small"
+					          type="success"
+					         >部署</el-button>
+					
 				</el-form>
+
   			</el-col>
   		</el-row>
     </div>
@@ -55,9 +95,26 @@
     	data(){
     		return {
     			city: {},
+				modelConfig:{
+					configname: 'PredRNN模型训练配置', //店铺名称
+					modelname:'PredRNN',
+				},
+				
+				modelConfigList:[
+{name:'LMoeEnvName(python3.6版)'},
+{name:'ADSEnvName(python3.5版)'},
+{name:'LightNetEnvName(python3.6版)'}]
+				,
+
+				modelMainPath:{
+					path: '/home/pre/LMoe/main.py', //店铺名称
+				},
+				Log:{
+					path: '/Data/output/LMoe/', //
+				},
     			formData: {
-					name: '', //店铺名称
-					address: '', //地址
+					name: '123', //店铺名称
+					address: '123', //地址
 					latitude: '',
 					longitude: '',
 					description: '', //介绍
@@ -79,16 +136,22 @@
 
 		        },
 		        rules: {
-					name: [
-						{ required: true,message: '请输入环境名称', trigger: 'blur' },
+					Configname: [
+						{ required: true,message: '配置名称必填', trigger: 'blur' },
 					],
-					address: [
-						{ required: true, message: '请输入conda配置标准库名:版本号', trigger: 'blur' }
+					
+					runPath: [
+						{ required: true,message: '程序入口必填', trigger: 'blur' },
 					],
-					phone: [
-						{ required: true, message: '请输入高级设置1' },
-						{ type: 'number', message: '电话号码必须是数字' }
+
+					runPath: [
+						{ required: true,message: '程序入口必填', trigger: 'blur' },
 					],
+
+					envs: [
+						{ required: true,message: '环境必选', trigger: 'blur' },
+					],
+					
 				},
 				options: [{
 		          	value: '选项1',
@@ -105,22 +168,23 @@
 		        }],
        	 		activityValue: '选项1',
 				activities: [{
-		        	icon_name: 'LMoE',
-		        	name: '17.77',
-		        	description: '/home/models/Files/LMoE_modelETS',
-                    type: '✔',
-
-			    },{
-		        	icon_name: 'ADSNet',
-		        	name: '16.66',
-		        	description: '/home/models/Files/ADSNet_modelETS',
-                    type: '',
-
-			    },{
-		        	icon_name: "LightNet",
-		        	name: '13.33',
-		        	description: '/home/models/Files/LightNet_modelETS',
-                    type: '',
+		        	icon_name: '1',
+		        	name: 'LMoe多专家预报',
+					score_name:'ETS',
+		        	score: '0.1790',
+			    },
+				
+				{
+		        	icon_name: '2',
+		        	name: 'ADSNet雷电预报模型',
+					score_name:'ETS',
+		        	score: '0.1660',
+			    },
+				{
+		        	icon_name: '3',
+		        	name: 'LightNet雷电预报模型',
+					score_name:'ETS',
+		        	score: '0.1440',
 			    }],
 			    
     		}
@@ -132,6 +196,9 @@
     		this.initData();
     	},
     	methods: {
+
+
+
     		async initData(){
     			try{
     				this.city = await cityGuess();
@@ -160,26 +227,23 @@
     				console.log(err);
     			}
     		},
+			
+
     		async querySearchAsync(queryString, cb) {
-    			if (queryString) {
-	    			try{
-	    				const cityList = await searchplace(this.city.id, queryString);
-	    				if (cityList instanceof Array) {
-		    				cityList.map(item => {
-		    					item.value = item.address;
-		    					return item;
-		    				})
-		    				cb(cityList)
-	    				}
-	    			}catch(err){
-	    				console.log(err)
-	    			}
-    			}
+				console.log('ok')
+				console.log(queryString)
+				this.modelConfigList.map(item => {
+					console.log(item)
+							item.value = item.name;
+							return item;
+							})
+						
+
+						cb(cityList)
+			
 		    },
 		    addressSelect(address){
-		    	this.formData.latitude = address.latitude;
-		    	this.formData.longitude = address.longitude;
-		    	console.log(this.formData.latitude, this.formData.longitude)
+				console.log('ok222')
 		    },
 			handleShopAvatarScucess(res, file) {
 				if (res.status == 1) {
@@ -277,65 +341,7 @@
 		    	this.activities.splice(index, 1)
 		    },
 		    submitForm(formName) {
-				this.$refs[formName].validate(async (valid) => {
-					if (valid) {
-						Object.assign(this.formData, {activities: this.activities}, {
-							category: this.selectedCategory.join('/')
-						})
-						try{
-							let result = await addShop(this.formData);
-							if (result.status == 1) {
-								this.$message({
-					            	type: 'success',
-					            	message: '添加成功'
-					          	});
-					          	this.formData = {
-									name: '', //店铺名称
-									address: '', //地址
-									latitude: '',
-									longitude: '',
-									description: '', //介绍
-									phone: '',
-									promotion_info: '',
-									float_delivery_fee: 5, //运费
-									float_minimum_order_amount: 20, //起价
-									is_premium: true,
-									delivery_mode: true,
-									new: true,
-									bao: true,
-									zhun: true,
-									piao: true,
-									startTime: '',
-				       	 			endTime: '',
-				       	 			image_path: '',
-				       	 			business_license_image: '',
-				       	 			catering_service_license_image: '',
-						        };
-						        this.selectedCategory = ['快餐便当', '简餐'];
-						        this.activities = [{
-						        	icon_name: '减',
-						        	name: '满减优惠',
-						        	description: '满30减5，满60减8',
-							    }];
-							}else{
-								this.$message({
-					            	type: 'error',
-					            	message: result.message
-					          	});
-							}
-							console.log(result)
-						}catch(err){
-							console.log(err)
-						}
-					} else {
-						this.$notify.error({
-							title: '错误',
-							message: '请检查输入是否正确',
-							offset: 100
-						});
-						return false;
-					}
-				});
+				
 			},
 		}
     }

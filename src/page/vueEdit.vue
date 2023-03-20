@@ -26,7 +26,7 @@
 					    <el-table-column
 					      prop="description"
 					      align="cneter"
-					      label="配置详情">
+					      label="模型名称">
 					    </el-table-column>
 					    <el-table-column
 					    	label="操作"
@@ -40,17 +40,12 @@
 					    </template>
 					    </el-table-column>
 					</el-table>
-					<el-form-item label="模型文件路径" prop="name">
+					<el-form-item label="验证模型程序入口" required="true">
 						<el-input ></el-input>
 					</el-form-item>
-					<el-form-item label="输出文件路径" prop="address">
-						<el-autocomplete
-						  v-model="formData.address"
-						  :fetch-suggestions="querySearchAsync"
-						  placeholder="请指定到具体文件名"
-						  style="width: 100%;"
-						  @select="addressSelect"
-						></el-autocomplete>
+					<el-form-item label="程序输出文件地址" required="true">
+						<el-input ></el-input>
+
 					</el-form-item>
 
 					<el-form-item class="button_submit">

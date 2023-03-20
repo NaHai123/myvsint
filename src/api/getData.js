@@ -226,3 +226,9 @@ export const getAddressById = address_id => fetch('/v1/addresse/' + address_id);
  */
 
 export const getUserCity = () => fetch('/v1/user/city/count');
+
+
+/**
+ * 获取模型配置信息
+ */
+export const getConfig = () => fetch('/v1/user/city/count');

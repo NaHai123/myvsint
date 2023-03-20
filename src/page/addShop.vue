@@ -4,23 +4,15 @@
         <el-row style="margin-top: 20px;">
   			<el-col :span="12" :offset="4">
 		        <el-form :model="formData" :rules="rules" ref="formData" label-width="110px" class="demo-formData">
-					<el-form-item label="配置名称" prop="name">
-						<el-input v-model="formData.name" v-input="LMoE多专家预报"></el-input>
+					<el-form-item label="配置名称" required=true>
+						<el-input v-model="modelConfig.configname" v-input="LMoE多专家预报"></el-input>
 					</el-form-item>
-					<el-form-item label="环境名称" prop="name">
+					<!-- <el-form-item label="环境名称" prop="name">
 						<el-input ></el-input>
-					</el-form-item>
-					<el-form-item label="首次创建环境必填" prop="address">
-						<el-autocomplete
-						  v-model="formData.address"
-						  :fetch-suggestions="querySearchAsync"
-						  placeholder="包请用#分割 例如 torch:3.6#numpy:3.5"
-						  style="width: 100%;"
-						  @select="addressSelect"
-						></el-autocomplete>
-					</el-form-item>
-					<el-form-item label="模型名称" prop="phone">
-						<el-input v-model.number="formData.phone" maxLength="11"></el-input>
+					</el-form-item> -->
+					
+					<el-form-item label="模型名称（建议填）" >
+						<el-input v-model="modelConfig.modelname" maxLength="11"></el-input>
 					</el-form-item>
 					
 					
@@ -30,9 +22,39 @@
 						<span>是否开启训练异常上报</span>
 						<el-switch on-text="" off-text="" v-model="formData.delivery_mode"></el-switch>
 					</el-form-item>
-					
-					
 
+
+					<el-form-item label="程序主文件"  required=true>
+						<el-autocomplete
+						  v-model="modelMainPath.path"
+						  :fetch-suggestions="querySearchAsync"
+						  style="width: 100%;"
+						  @select="addressSelect"
+						></el-autocomplete>
+					</el-form-item>
+
+					<el-form-item label="日志保存地址" required=true>
+						<el-autocomplete
+						  v-model="Log.path"
+						  :fetch-suggestions="querySearchAsync"
+						  style="width: 100%;"
+						  @select="addressSelect"
+						></el-autocomplete>
+					</el-form-item>
+
+  <el-form-item label="conda环境选择" required=true>
+	<el-select
+    v-model="modelConfigList.name"
+    placeholder="请选择"
+     style="width: 100%;"
+    class="dialogSelect" >
+	<el-option v-for="item in modelConfigList" :label="item.name" :value="item.name"
+                           :key="item.name"></el-option>
+
+    </el-select>
+					</el-form-item>
+
+					
 				
 					<el-table
 					    :data="activities"
@@ -60,7 +82,6 @@
 					    	label="操作"
 					    	width="120">
 					    <template slot-scope="scope">
-					
 					        <el-button
 					          size="small"
 					          type="danger"
@@ -85,9 +106,26 @@
     	data(){
     		return {
     			city: {},
+				modelConfig:{
+					configname: 'PredRNN模型训练配置', //店铺名称
+					modelname:'PredRNN',
+				},
+				
+				modelConfigList:[
+{name:'LMoeEnvName(python3.6版)'},
+{name:'ADSEnvName(python3.5版)'},
+{name:'LightNetEnvName(python3.6版)'}]
+				,
+
+				modelMainPath:{
+					path: '/home/models/PredRNN/main.py', //店铺名称
+				},
+				Log:{
+					path: '/home/models/PredRNN/Nohups/PredRNN.log', //店铺名称
+				},
     			formData: {
-					name: '', //店铺名称
-					address: '', //地址
+					name: '123', //店铺名称
+					address: '123', //地址
 					latitude: '',
 					longitude: '',
 					description: '', //介绍
@@ -109,16 +147,22 @@
 
 		        },
 		        rules: {
-					name: [
-						{ required: true,message: '请输入环境名称', trigger: 'blur' },
+					Configname: [
+						{ required: true,message: '配置名称必填', trigger: 'blur' },
 					],
-					address: [
-						{ required: true, message: '请输入conda配置标准库名:版本号', trigger: 'blur' }
+					
+					runPath: [
+						{ required: true,message: '程序入口必填', trigger: 'blur' },
 					],
-					phone: [
-						{ required: true, message: '请输入高级设置1' },
-						{ type: 'number', message: '电话号码必须是数字' }
+
+					runPath: [
+						{ required: true,message: '程序入口必填', trigger: 'blur' },
 					],
+
+					envs: [
+						{ required: true,message: '环境必选', trigger: 'blur' },
+					],
+					
 				},
 				options: [{
 		          	value: '选项1',
@@ -186,25 +230,39 @@
     			}
     		},
     		async querySearchAsync(queryString, cb) {
-    			if (queryString) {
-	    			try{
-	    				const cityList = await searchplace(this.city.id, queryString);
-	    				if (cityList instanceof Array) {
-		    				cityList.map(item => {
-		    					item.value = item.address;
-		    					return item;
-		    				})
-		    				cb(cityList)
-	    				}
-	    			}catch(err){
-	    				console.log(err)
-	    			}
-    			}
+				console.log('ok')
+				console.log(queryString)
+				this.modelConfigList.map(item => {
+					console.log(item)
+							item.value = item.name;
+							return item;
+							})
+						
+
+						cb(cityList)
+							// if (queryString) {
+	    		// 	try{
+				// 		this.modelConfigList.map(item => {
+				// 			item.value = item.name;
+				// 			return item;
+				// 		})
+					//	cb(this.modelConfigList)
+	    				// const cityList = await searchplace(this.city.id, queryString);
+	    				// if (cityList instanceof Array) {
+		    			// 	cityList.map(item => {
+		    			// 		item.value = item.address;
+		    			// 		return item;
+		    			// 	})
+		    			// 	cb(cityList)
+	    				
+	    		// 	}catch(err){
+	    		// 		console.log(err)
+	    		// 	}
+    			// }
+    		
 		    },
 		    addressSelect(address){
-		    	this.formData.latitude = address.latitude;
-		    	this.formData.longitude = address.longitude;
-		    	console.log(this.formData.latitude, this.formData.longitude)
+				console.log('ok222')
 		    },
 			handleShopAvatarScucess(res, file) {
 				if (res.status == 1) {
