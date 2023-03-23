@@ -105,18 +105,22 @@ export default {
               //async: false,  //将axios设置为同步，似乎设置不成功？
            }).then(
               success=>{
-                  self.backDataList=JSON.parse(success.data)   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                  //sessionStorage.setItem("getSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
+                 self.backDataList=JSON.parse(success.data)   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 //sessionStorage.setItem("getSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
                   console.log("后端数据文件列表及预测、真实文件对数")
-                  self.backDataListLength = self.backDataList['fileNameList'][0].length  //注意：此处需保证fileNameList中两个文件名数组长度相同
                   console.log(self.backDataList)
-                  console.log(self.backDataListLength)
-                  for (let c = 0; c < self.backDataListLength; c++) {
-                      self.period.push(self.backDataList['fileNameList'][0][c])
-                      self.predictPeriod.push(self.backDataList['fileNameList'][1][c])
-                  }
+                  console.log(self.backDataList['fileNameList'][0].length)
+                  self.backDataListLength = self.backDataList['fileNameList'][0].length  //注意：此处需保证fileNameList中两个文件名数组长度相同
               }
                   );
+
+                  //后端经纬度数据文件列表添加进backDataList，预测、真实文件对数添加进
+                  //this.backDataList = sessionStorage.getItem("getSuccess")
+                  //this.backDataList = JSON.parse(this.backDataList)
+                  //this.backDataListLength = Object.keys(this.backDataList)['fileNameList'][0].length  //轮播时分模型，所以计算两个模型地数据总对数，模型只在选择时间显示时有用
+                  //self.backDataListLength = self.backDataList['fileNameList'][0].length  //注意：此处需保证fileNameList中两个文件名数组长度相同
+                  console.log(self.backDataList)
+                  console.log(self.backDataListLength)
   },
   methods: {
       //2023-3-20新增，轮播文件列表获取
@@ -124,35 +128,32 @@ export default {
       {
                //2023-3-10新增，从后端获取已有数据文件名
       alert("轮播数据模型来源已切换！")
-        var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
-          this.$http.post("http://127.0.0.1:8000/getnpynames/",
+     this.$http.post("http://127.0.0.1:8000/getnpynames/",
            {'uid':100,     //0表示取真实数据，1表示取预测数据，100表示开始时读取后端数据文件列表
             'selectModel': this.selectModel,  //选择轮播哪个模型的数据
                   },
            {
               headers:{'Content-Type':'application/json'},
-              emulateJSON:true,
-              //async: false,  //将axios设置为同步，似乎设置不成功？
+              emulateJSON:true
            }).then(
               success=>{
-                  self.backDataList=JSON.parse(success.data)   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                  //sessionStorage.setItem("getSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
-                  console.log("后端数据文件列表及预测、真实文件对数")
-                  self.backDataListLength = self.backDataList['fileNameList'][0].length  //注意：此处需保证fileNameList中两个文件名数组长度相同
-                  console.log(self.backDataList)
-                  console.log(self.backDataListLength)
-                  self.period = []    //更换轮播数据模型来源时需清空
-                  self.predictPeriod = []    //更换轮播数据模型来源时需清空
-                  self.periodID = -1
-                  self.predictPeriodID = -1
-                  for (let c = 0; c < self.backDataListLength; c++) {
-                      self.period.push(self.backDataList['fileNameList'][0][c])
-                      self.predictPeriod.push(self.backDataList['fileNameList'][1][c])
-                  }
-                  console.log("88888888888")
-                  console.log(self.period)
+                 //this.backDataList=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 sessionStorage.setItem("getSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
               }
                   );
+                  console.log("后端数据文件列表及预测、真实文件对数")
+                  //后端经纬度数据文件列表添加进backDataList，预测、真实文件对数添加进
+                  this.backDataList = sessionStorage.getItem("getSuccess")
+                  this.backDataList = JSON.parse(this.backDataList)
+                  //this.backDataListLength = Object.keys(this.backDataList)['fileNameList'][0].length  //轮播时分模型，所以计算两个模型地数据总对数，模型只在选择时间显示时有用
+                  this.backDataListLength = this.backDataList['fileNameList'][0].length  //注意：此处需保证fileNameList中两个文件名数组长度相同
+                  console.log(this.backDataList)
+                  console.log(this.backDataListLength)
+
+           for (let c = 0; c < this.backDataListLength; c++) {
+                      this.period.push(this.backDataList['fileNameList'][0][c])
+                      this.predictPeriod.push(this.backDataList['fileNameList'][1][c])
+                  }
       },
   /*旧版selectTime()，选择0~11的序号
   selectTime(){
@@ -187,7 +188,6 @@ export default {
       //this.init();
             console.log("正在读取选择时间的真实雷电数据")
             this.percent = 0   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数。 选择某时间数据显示时进度条置为0，因为进度条为轮播进度。
-            var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
             this.$http.post("http://127.0.0.1:8000/readRealData/",
            {'uid':20,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             //'period':this.period[this.periodID]    指示后端读取时间段202007111600的npy文件 ykcs
@@ -199,26 +199,26 @@ export default {
               emulateJSON:true
            }).then(
               success=>{
-                 self.backdata=JSON.parse(success.data)   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                 //sessionStorage.setItem("success",success.data)  //存在问题：接收后端数据需刷新两次页面
-                  //后端数据添加进points
-                  let position = new BMap.Point(self.backdata['point'][0][0],self.backdata['point'][0][1])
-           for (let c = 0; c < self.backdata['point'].length; c++) {
-                  position = new BMap.Point(self.backdata['point'][c][0],self.backdata['point'][c][1])
-                  self.points.push(position)
-                  }
-                  this.showPoly(this.points,this.baiduMap);
+                 //this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 sessionStorage.setItem("success",success.data)  //存在问题：接收后端数据需刷新两次页面
               }
                   );
+                  //后端数据添加进points
+                  this.backdata=sessionStorage.getItem("success")
+                  this.backdata=JSON.parse(this.backdata)
+                  let position = new BMap.Point(this.backdata['point'][0][0],this.backdata['point'][0][1])
+           for (let c = 0; c < this.backdata['point'].length; c++) {
+                  position = new BMap.Point(this.backdata['point'][c][0],this.backdata['point'][c][1])
+                  this.points.push(position)
+                  }
 
-
+      this.showPoly(this.points,this.baiduMap);
       this.addZoomControl(this.baiduMap);
       this.backdata=[];
       this.predictPoints=[];
       //this.predictANDheatmap(this.baiduMap);
       console.log("选择显示的后端预测数据文件名称")
-      console.log(this.selectDataFileName.replace(/-/g,'').replace(/T/g,'').substring(0,Object.keys(this.selectDataFileName).length-6)+'50.npy')
-     var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
+      console.log(this.selectDataFileName.replace(/-/g,'').replace(/T/g,'').substring(0,Object.keys(this.selectDataFileName).length-6)+'50')
      this.$http.post("http://127.0.0.1:8000/readForecastData/",
            {'uid':21,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             //'period':this.predictPeriod[this.predictPeriodID]    //指示后端读取对于预测时间段predictPeriodID的npy文件 ykcs
@@ -230,36 +230,40 @@ export default {
               emulateJSON:true
            }).then(
               success=>{
-                 self.predictBackdata=JSON.parse(success.data )  //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                 //sessionStorage.setItem("predictSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
-                 //后端数据添加进points
-                  console.log("正在读取选择时间的预测雷电数据")
-                 for (let c = 0; c < self.predictBackdata['point'].length; c++) {
-                  //!!!注意，此处增加了模拟数据，以用于前期展示。后期需删除掉点b 以及 a中的偏离!!!
-                  let a = {"lng":self.predictBackdata['point'][c][0],"lat":self.predictBackdata['point'][c][1],"count":50+Math.random()*150}
-                  let b = {"lng":self.predictBackdata['point'][c][0]+Math.random(),"lat":self.predictBackdata['point'][c][1]+Math.random(),"count":50+Math.random()*100}
-                  self.predictPoints.push(a)
-                  self.predictPoints.push(b)
-                  }
-                  //开始添加热力图
-                  var gradient = {
-    	              0: 'rgb(102, 255, 0, 1)',         //0.7: 'rgb(0, 110, 255, 1)',   最后一位表示透明度，0为透明
-    	              0.5: 'rgb(255, 170, 0, 1)',         //0.8: 'rgb(241, 175, 6, 1)',
-    	              1: 'rgb(255, 0, 0, 1)'             //1: 'rgb(247, 46, 5, 1)'
-                  };
-                  let heatmapOverlay = new BMapLib.HeatmapOverlay({
-	                  "radius": 20
-                  });
-                  this.baiduMap.addOverlay(heatmapOverlay);
-                  heatmapOverlay.setDataSet({
-	                  data: this.predictPoints,
-	                  max: 200
-                  });
-                  heatmapOverlay.setOptions({
-	                  "gradient": gradient
-                  });
+                 //this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 sessionStorage.setItem("predictSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
               }
                   );
+                  //后端数据添加进points
+                  this.predictBackdata = sessionStorage.getItem("predictSuccess")
+                  this.predictBackdata = JSON.parse(this.predictBackdata)
+                  console.log("正在读取选择时间的预测雷电数据")
+
+                 for (let c = 0; c < this.predictBackdata['point'].length; c++) {
+                  //!!!注意，此处增加了模拟数据，以用于前期展示。后期需删除掉点b 以及 a中的偏离!!!
+                  let a = {"lng":this.predictBackdata['point'][c][0],"lat":this.predictBackdata['point'][c][1],"count":50+Math.random()*150}
+                  let b = {"lng":this.predictBackdata['point'][c][0]+Math.random(),"lat":this.predictBackdata['point'][c][1]+Math.random(),"count":50+Math.random()*100}
+                  this.predictPoints.push(a)
+                  this.predictPoints.push(b)
+                  }
+
+	//开始添加热力图
+    var gradient = {
+    	0: 'rgb(102, 255, 0, 1)',         //0.7: 'rgb(0, 110, 255, 1)',   最后一位表示透明度，0为透明
+    	0.5: 'rgb(255, 170, 0, 1)',         //0.8: 'rgb(241, 175, 6, 1)',
+    	1: 'rgb(255, 0, 0, 1)'             //1: 'rgb(247, 46, 5, 1)'
+    };
+    let heatmapOverlay = new BMapLib.HeatmapOverlay({
+	    "radius": 20
+    });
+    this.baiduMap.addOverlay(heatmapOverlay);
+    heatmapOverlay.setDataSet({
+	    data: this.predictPoints,
+	    max: 200
+    });
+    heatmapOverlay.setOptions({
+	    "gradient": gradient
+    });
 
       this.ChartUpdate();
       //this.selectPredictPeriodID = parseInt(this.selectPeriodID)-2  //this.selectPeriodID为字符串？？parseInt转换为数字
@@ -304,7 +308,7 @@ export default {
         document.body.appendChild(script)
     },
      //接收预测数据，描绘热力图
-    predictANDheatmap(map) {
+     predictANDheatmap(map) {
     /*
 	var mapStyle = {
 		features: ["road", "building", "water", "land"], //隐藏地图上的"poi",
@@ -314,7 +318,6 @@ export default {
 	*/
 	 //获取后端预测的天气数据
 	 this.predictPeriodID = (this.predictPeriodID+1)%this.backDataListLength
-     var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
      this.$http.post("http://127.0.0.1:8000/readForecastData/",
            {'uid':1,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             'period':this.predictPeriod[this.predictPeriodID],  //指示后端读取对于预测时间段predictPeriodID的npy文件 ykcs
@@ -326,56 +329,58 @@ export default {
               emulateJSON:true
            }).then(
               success=>{
-                 self.predictBackdata=JSON.parse(success.data)   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                 //sessionStorage.setItem("predictSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
+                 //this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 sessionStorage.setItem("predictSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
+              }
+                  );
                   //后端数据添加进points
-                  console.log(self.predictBackdata)
+                  this.predictBackdata = sessionStorage.getItem("predictSuccess")
+                  this.predictBackdata = JSON.parse(this.predictBackdata)
+                  console.log(this.predictBackdata)
                   console.log(111111111111111111111111)
-                  console.log("predictPeriodID"+" "+self.predictPeriodID)
+                  console.log("predictPeriodID"+" "+this.predictPeriodID)
 
-                 for (let c = 0; c < self.predictBackdata['point'].length; c++) {
+                 for (let c = 0; c < this.predictBackdata['point'].length; c++) {
                   //!!!注意，此处增加了模拟数据，以用于前期展示。后期需删除掉点b 以及 a中的偏离!!!
-                  let a = {"lng":self.predictBackdata['point'][c][0],"lat":self.predictBackdata['point'][c][1],"count":50+Math.random()*150}
-                  let b = {"lng":self.predictBackdata['point'][c][0]+Math.random(),"lat":self.predictBackdata['point'][c][1]+Math.random(),"count":50+Math.random()*100}
-                  self.predictPoints.push(a)
-                  self.predictPoints.push(b)
+                  let a = {"lng":this.predictBackdata['point'][c][0],"lat":this.predictBackdata['point'][c][1],"count":50+Math.random()*150}
+                  let b = {"lng":this.predictBackdata['point'][c][0]+Math.random(),"lat":this.predictBackdata['point'][c][1]+Math.random(),"count":50+Math.random()*100}
+                  this.predictPoints.push(a)
+                  this.predictPoints.push(b)
                   }
 
-                  	//开始添加热力图
-                  	var gradient = {
-                  		0: 'rgb(102, 255, 0, 1)',         //0.7: 'rgb(0, 110, 255, 1)',   最后一位表示透明度，0为透明
-                  		0.5: 'rgb(255, 170, 0, 1)',         //0.8: 'rgb(241, 175, 6, 1)',
-                  		1: 'rgb(255, 0, 0, 1)'             //1: 'rgb(247, 46, 5, 1)'
-                	  };
-                 	 let heatmapOverlay = new BMapLib.HeatmapOverlay({
-	              	    "radius": 20
-                	  });
-                 	 map.addOverlay(heatmapOverlay);
-               	   heatmapOverlay.setDataSet({
-	              	    data: this.predictPoints,
-              		    max: 200
-                	  });
-              	    heatmapOverlay.setOptions({
-              		    "gradient": gradient
-               	   });
-                	   /*
-                	      let labelPoint = new BMap.Point(105.83,21.32);
-                	  let opts = {
-                	    position : labelPoint,    // 指定文本标注所在的地理位置
-                	    offset   : new BMap.Size(30, -30)    //设置文本偏移量
-               	   };
-                  	    let label = new BMap.Label("预测雷电数据日期时间："+this.predictPeriod[this.predictPeriodID], opts);  // 创建文本标注对象
-                  	    label.setStyle({
-                  	         color : "red",
-                  	         fontSize : "12px",
-                  	         height : "20px",
-                    	       lineHeight : "20px",
-                    	       fontFamily:"微软雅黑"
-                    	   });
-                 	  map.addOverlay(label);
-                  	 */
-                   	         }
-                 	               );
+	//开始添加热力图
+    var gradient = {
+    	0: 'rgb(102, 255, 0, 1)',         //0.7: 'rgb(0, 110, 255, 1)',   最后一位表示透明度，0为透明
+    	0.5: 'rgb(255, 170, 0, 1)',         //0.8: 'rgb(241, 175, 6, 1)',
+    	1: 'rgb(255, 0, 0, 1)'             //1: 'rgb(247, 46, 5, 1)'
+    };
+    let heatmapOverlay = new BMapLib.HeatmapOverlay({
+	    "radius": 20
+    });
+    map.addOverlay(heatmapOverlay);
+    heatmapOverlay.setDataSet({
+	    data: this.predictPoints,
+	    max: 200
+    });
+    heatmapOverlay.setOptions({
+	    "gradient": gradient
+    });
+     /*
+        let labelPoint = new BMap.Point(105.83,21.32);
+    let opts = {
+      position : labelPoint,    // 指定文本标注所在的地理位置
+      offset   : new BMap.Size(30, -30)    //设置文本偏移量
+    };
+        let label = new BMap.Label("预测雷电数据日期时间："+this.predictPeriod[this.predictPeriodID], opts);  // 创建文本标注对象
+        label.setStyle({
+             color : "red",
+             fontSize : "12px",
+             height : "20px",
+             lineHeight : "20px",
+             fontFamily:"微软雅黑"
+         });
+     map.addOverlay(label);
+     */
     },
     // 添加地图右上角固定显示
     addZoomControl(map) {
@@ -467,12 +472,11 @@ export default {
         */
     },
         //读取后端数据，本版本只接收后端一个经纬度。 //存在问题：接收后端数据需刷新两次页面！！！
-        async init(){
+        init(){
             this.periodID = (this.periodID+1)%this.backDataListLength
             console.log("periodID"+" "+this.periodID);
             this.percent = Number((100*(this.periodID)/(this.backDataListLength-1)).toFixed(2))   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数
-            var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
-            await this.$http.post("http://127.0.0.1:8000/readRealData/",
+            this.$http.post("http://127.0.0.1:8000/readRealData/",
            {'uid':0,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             //'period':this.backDataList[this.periodID][0]    指示后端读取时间段202007111600的npy文件 ykcs
             'period':this.period[this.periodID],
@@ -484,17 +488,18 @@ export default {
               emulateJSON:true
            }).then(
               success=>{
-                 self.backdata=JSON.parse(success.data)   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                 //sessionStorage.setItem("success",success.data)  //存在问题：接收后端数据需刷新两次页面
-                  //后端数据添加进points
-                  let position = new BMap.Point(self.backdata['point'][0][0],self.backdata['point'][0][1])
-           for (let c = 0; c < self.backdata['point'].length; c++) {
-                  position = new BMap.Point(self.backdata['point'][c][0],self.backdata['point'][c][1])
-                  self.points.push(position)
-                  }
+                 //this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 sessionStorage.setItem("success",success.data)  //存在问题：接收后端数据需刷新两次页面
               }
                   );
-
+                  //后端数据添加进points
+                  this.backdata=sessionStorage.getItem("success")
+                  this.backdata=JSON.parse(this.backdata)
+                  let position = new BMap.Point(this.backdata['point'][0][0],this.backdata['point'][0][1])
+           for (let c = 0; c < this.backdata['point'].length; c++) {
+                  position = new BMap.Point(this.backdata['point'][c][0],this.backdata['point'][c][1])
+                  this.points.push(position)
+                  }
      },
      //生成百度地图，并在地图上标记points中的坐标
     map(){
@@ -532,9 +537,9 @@ export default {
    if (this.timer && this.pause!=1){
           clearInterval(this.timer);
   }else {
-       this.timer = setInterval( async ()=>{map.clearOverlays();this.backdata=[];this.points=[];await this.init();this.showPoly(this.points,map);this.addZoomControl(map);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(map);this.ChartUpdate();},3000 );  //5000ms刷新一次
+       this.timer = setInterval( ()=>{map.clearOverlays();this.backdata=[];this.points=[];this.init();this.showPoly(this.points,map);this.addZoomControl(map);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(map);this.ChartUpdate();},3000 );  //5000ms刷新一次
   }
-  },
+  }
  },
 mounted () {
       //定时刷新页面
@@ -557,6 +562,10 @@ mounted () {
                       this.predictPeriod.push(this.backDataList['ADSNet'][c][1])
                   }
     */
+               for (let c = 0; c < this.backDataListLength; c++) {
+                      this.period.push(this.backDataList['fileNameList'][0][c])
+                      this.predictPeriod.push(this.backDataList['fileNameList'][1][c])
+                  }
    this.map();
 },
 

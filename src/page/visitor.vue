@@ -31,7 +31,7 @@ height:1000px;
                  <div style="height:5%;text-align:left;;color:white;font-size:150%;margin-left:10px" font-size:40px>
                           配置列表
                  </div>
-             
+
                <details style="color:white;text-align:left">
                        <summary>全部</summary>
                        <ol>
@@ -39,7 +39,7 @@ height:1000px;
                         <li>LMoE多专家集成预报模型</li>
                            <li>ADSNet雷电预报模型</li>
                            <li>LightNet雷电预报模型</li>
-                           
+
                            <li>PredRNN预报模型</li>
                        </ol>
                    </details>
@@ -47,13 +47,13 @@ height:1000px;
                         <summary>时间序列</summary>
                          <ol>
                         <li>PredRNN预报模型</li>
-                     
+
                         </ol>
                </details>
 
           </div>
           <div style="width:40%;height: 42%;color:white;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);float: left;text-align:center;margin-left:5px">
-              
+
             <p style="height:5%;text-align:left;;color:white;font-size:150%;margin-left:10px" font-size:40px>{{name}}</p>
 
                <div style="width:25%;height: 20%;color:white;border-style: solid;border-color: rgba(255,255,255,0.1);background-color:rgba(255,255,80,0.1);float: left;text-align:center;margin-left:35px;margin-top:50px">
@@ -100,8 +100,10 @@ height:1000px;
                 </div>
           </div>
           <div style="width: 40%;height: 42%;float: left;border-style: solid;border-color: black;background-color:rgba(255,255,255,0.1);margin-left:5px;margin-top:5px">
-               <button style="border-radius: 50px;width: 15%;height: 10%;margin-left:10px;margin-top:5px;background-color:#00CCFF;" type="button">
-               训练中
+               <button style="border-radius: 50px;width: 15%;height: 10%;margin-left:10px;margin-top:5px;background-color:#00CCFF;" type="button"
+               id="training"
+               v-on:click="startORend">
+               终止训练
                </button>
                <div style="width: 45%;color:black;height: 80%;line-height:2.5;border-radius:5px;background-color:rgba(255,255,255,0.4);margin-left:10px;text-align:left;border-style: solid;margin-top:10px">
                模型名称：{{kind}}</br>
@@ -184,7 +186,71 @@ this.memory=res.data.memory
 this.loss=res.data.loss
 this.curren=res.data.curren
 })
-}
+},
+  methods: {
+     getTrainingState()
+     {
+           this.$http.get('http://localhost:8002/static/2.json')
+           .then(res=>{
+           this.name=res.data.name,
+           this.kind=res.data.kind
+           this.trainer=res.data.trainer
+           this.history1=res.data.history1
+           this.history2=res.data.history2
+           this.history3=res.data.history3
+           this.cost=res.data.cost
+           this.state=res.data.state
+           this.start=res.data.start
+           this.end=res.data.end
+           this.h1=res.data.h1
+           this.h2=res.data.h2
+           this.h3=res.data.h3
+           this.epoch=res.data.epoch
+           this.memory=res.data.memory
+           this.loss=res.data.loss
+           this.curren=res.data.curren
+           })
+     },
+     startORend(){
+        if (this.state === "非训练状态")
+        {
+                this.$http.post("http://127.0.0.1:8000/modelTraining/",
+                {'uid':"visitor",     //表示请求由模型训练监控页面发出
+                       },
+                {
+                   headers:{'Content-Type':'application/json'},
+                   emulateJSON:true
+                }).then(
+                   success=>{
+                      alert("模型开始训练")
+                            }
+                      );
+                this.state = "训练中"
+                document.getElementById("training").innerHTML = "终止训练"
+                //"训练结束时间"置空
+                this.end = ""
+        }
+        else
+        {
+                this.$http.post("http://127.0.0.1:8000/terminateModelTraining/",
+                {'uid':"visitor",     //表示请求由模型训练监控页面发出
+                       },
+                {
+                   headers:{'Content-Type':'application/json'},
+                   emulateJSON:true
+                }).then(
+                   success=>{
+                      alert("模型训练终止")
+                            }
+                      );
+                this.state = "非训练状态"
+                document.getElementById("training").innerHTML = "开始训练"
+                //填训练结束时间
+                var d=new Date()
+                this.end = d.getHours()+":"+d.getMinutes()+" "+d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate()
+        }
+     }
+  },
 
 };
 </script>

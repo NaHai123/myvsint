@@ -10,12 +10,12 @@
 					<!-- <el-form-item label="环境名称" prop="name">
 						<el-input ></el-input>
 					</el-form-item> -->
-					
+
 					<el-form-item label="模型名称（建议填）" >
 						<el-input v-model="modelConfig.modelname" maxLength="11"></el-input>
 					</el-form-item>
-					
-					
+
+
 					<el-form-item label="高级设置5" style="white-space: nowrap;">
 						<span>是否开启训练完成提醒</span>
 						<el-switch on-text="" off-text="" v-model="formData.is_premium"></el-switch>
@@ -54,8 +54,8 @@
     </el-select>
 					</el-form-item>
 
-					
-				
+
+
 					<el-table
 					    :data="activities"
 					    style="min-width: 600px;margin-bottom: 20px;"
@@ -110,7 +110,7 @@
 					configname: 'PredRNN模型训练配置', //店铺名称
 					modelname:'PredRNN',
 				},
-				
+
 				modelConfigList:[
 {name:'LMoeEnvName(python3.6版)'},
 {name:'ADSEnvName(python3.5版)'},
@@ -150,7 +150,7 @@
 					Configname: [
 						{ required: true,message: '配置名称必填', trigger: 'blur' },
 					],
-					
+
 					runPath: [
 						{ required: true,message: '程序入口必填', trigger: 'blur' },
 					],
@@ -162,7 +162,7 @@
 					envs: [
 						{ required: true,message: '环境必选', trigger: 'blur' },
 					],
-					
+
 				},
 				options: [{
 		          	value: '选项1',
@@ -191,7 +191,7 @@
 		        	name: 'LightNet雷电预报模型',
 		        	description: 'LightNet',
 			    }],
-			    
+
     		}
     	},
     	components: {
@@ -237,7 +237,7 @@
 							item.value = item.name;
 							return item;
 							})
-						
+
 
 						cb(cityList)
 							// if (queryString) {
@@ -254,12 +254,12 @@
 		    			// 		return item;
 		    			// 	})
 		    			// 	cb(cityList)
-	    				
+
 	    		// 	}catch(err){
 	    		// 		console.log(err)
 	    		// 	}
     			// }
-    		
+
 		    },
 		    addressSelect(address){
 				console.log('ok222')
@@ -359,7 +359,71 @@
 		    handleDelete(index){
 		    	this.activities.splice(index, 1)
 		    },
+		    /*  2023-3-23原版
 		    submitForm(formName) {
+				this.$refs[formName].validate(async (valid) => {
+					if (valid) {
+						Object.assign(this.formData, {activities: this.activities}, {
+							category: this.selectedCategory.join('/')
+						})
+						try{
+							let result = await addShop(this.formData);
+							if (result.status == 1) {
+								this.$message({
+					            	type: 'success',
+					            	message: '添加成功'
+					          	});
+					          	this.formData = {
+									name: '', //店铺名称
+									address: '', //地址
+									latitude: '',
+									longitude: '',
+									description: '', //介绍
+									phone: '',
+									promotion_info: '',
+									float_delivery_fee: 5, //运费
+									float_minimum_order_amount: 20, //起价
+									is_premium: true,
+									delivery_mode: true,
+									new: true,
+									bao: true,
+									zhun: true,
+									piao: true,
+									startTime: '',
+				       	 			endTime: '',
+				       	 			image_path: '',
+				       	 			business_license_image: '',
+				       	 			catering_service_license_image: '',
+						        };
+						        this.selectedCategory = ['快餐便当', '简餐'];
+						        this.activities = [{
+						        	icon_name: '减',
+						        	name: '满减优惠',
+						        	description: '满30减5，满60减8',
+							    }];
+							}else{
+								this.$message({
+					            	type: 'error',
+					            	message: result.message
+					          	});
+							}
+							console.log(result)
+						}catch(err){
+							console.log(err)
+						}
+					} else {
+						this.$notify.error({
+							title: '错误',
+							message: '请检查输入是否正确',
+							offset: 100
+						});
+						return false;
+					}
+				});
+			},
+			*/
+			//2023-3-23新增
+			submitForm(formName) {
 				this.$refs[formName].validate(async (valid) => {
 					if (valid) {
 						Object.assign(this.formData, {activities: this.activities}, {

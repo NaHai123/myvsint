@@ -58,6 +58,7 @@
                 allAdminCount: null,
     			sevenDay: [],
     			sevenDate: [[],[],[]],
+    			GPUData:[],    //2023-3-20新增,存放服务器GPU状态
     		}
     	},
     	components: {
@@ -74,6 +75,10 @@
     	},
         computed: {
 
+        },
+        destroyed () { //2023-3-20新增
+         //销毁定时刷新timer
+         clearInterval(this.timer);
         },
     	methods: {
     		async initData(){
@@ -109,7 +114,32 @@
     			}).catch(err => {
     				console.log(err)
     			})
-    		}
+    		},
+    		getGPUData(){  //2023-3-20新增
+    		     this.$http.post("http://127.0.0.1:8000/gpuData/",
+                {'uid':1,     //0表示取真实数据，1表示取预测数据
+                       },
+                {
+                   headers:{'Content-Type':'application/json'},
+                   emulateJSON:true
+                }).then(
+                   success=>{
+                      //this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                      sessionStorage.setItem("GPUState",success.data)  //存在问题：接收后端数据需刷新两次页面
+                   }
+                       );
+                  //后端数据添加进points
+                  this.GPUData = sessionStorage.getItem("GPUState")
+                  this.GPUData = JSON.parse(this.GPUData)
+
+
+                  console.log(111111111111111111111111)
+                  if (this.timer){
+                        clearInterval(this.timer);
+                  }else {
+                       this.timer = setInterval( ()=>{this.getGPUData();},3000 );  //5000ms刷新一次
+                  }
+    		},
     	}
     }
 </script>
