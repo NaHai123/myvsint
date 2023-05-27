@@ -10,10 +10,28 @@
 
     <!--注释2-  改变中间和右边的排版即可调整本页面  -->
 
+      <form label="选择配置">
+		<select
+    	v-model="selectConfig"
+    	required=true
+        style="margin-top:6%;margin-left:2.3%;height:3%;width:10%;position:absolute;z-index:2;font-size:14px;"
+        >
+		  <option value="LMoe多专家集成预报模型" selected:disabled>LMoe多专家集成预报模型</option>
+          <option value="LightNet雷电预报模型">&nbsp&nbsp&nbsp&nbsp LightNet雷电预报模型</option>
+          <option value="ADSNet雷电预报模型">&nbsp&nbsp&nbsp&nbsp ADSNet雷电预报模型</option>
+          <option value="PredRNN时空序列预报模型">PredRNN时空序列预报模型</option>
+    	</select>
+
+
+           <el-button type="primary" style="opacity:80%;margin-top:6%;margin-left:13%;height:3%;width:4%;position:absolute;z-index:2;font-size:14px;text-align:center;"
+                v-on:click="doPre">预报
+           </el-button>
+
+      </form>
+
     <div style="width: 1300px; height:1000px; margin-top: 1%">   <!--注释3-  改变地图边框高度改center-map.vue中mapwrap；改变地图大小改center-map.vue中init中zoom  -->
 
       <CenterMap class="contetn_center_top" />
-
 
     </div>
 
@@ -22,18 +40,18 @@
         class="contetn_left-bottom contetn_lr-item"
         title="雷电高发时刻"
       >
-        <RightTop />   <!--注释1-  用于"雷电高发时刻"里数据显示  -->
-
+      {{this.selectCity}}
+            <RightTop />   <!--注释1-  用于"雷电高发时刻"里数据显示  -->
       </ItemWrap>
 
       <ItemWrap
         class="contetn_left-bottom contetn_lr-item"
-        title="实时预测雷电发生情况(京津冀地区)"
+        title="实时预测雷电发生情况TOP10(京津冀)"
         style="padding: 0 10px 16px 10px"
       >
-        <RightCenter />
-
+             <RightCenter />
       </ItemWrap>
+
     </div>
 
   </div>
@@ -62,7 +80,8 @@ export default {
   },
   data() {
     return {
-    
+          selectConfig:'LMoe多专家集成预报模型' ,  //2023-3-25新增，用于传输给后端预报接口doPre参数，有一个默认值
+          selectCity: '',  //2023-4-6新增，点击选择城市
     };
   },
   filters: {
@@ -73,9 +92,39 @@ export default {
   created() {
   },
 
-  mounted() {},
+  mounted() {
+            //2023-4-6新增，点击选择城市
+            this.$bus.$on('msg',(msg) => {
+               this.selectCity = msg;
+              console.log(msg)
+            })},
   methods: {
-  
+      //2023-3-24新增
+      doPre()
+      {
+            var d=new Date()
+            var month = d.getMonth()+1
+            var timeNow = d.getFullYear().toString()+("0" + month).slice(-2).toString()+("0" + d.getDate()).slice(-2).toString()+("0" + d.getHours()).slice(-2).toString()+"00"
+          	//预报页面：预报
+			console.log(timeNow)
+            this.$http.post("http://101.43.203.170:8080/doPre",
+           {
+               'time': timeNow,
+               'configName': this.selectConfig
+                  },
+           {
+              headers:{'Content-Type':'application/json'},
+              emulateJSON:true
+           }).then(
+              success=>{
+                             console.log("获取的doPre接口返回值为")
+                             console.log(success)
+                       }
+                  );
+           //2023-4-14新增
+           //alert("正在预测，预计耗时："+(12+Math.random()*6).toFixed(0)+"分钟。\n预测完毕将生成预测文件，并自动更新本页面数据。\n预测完毕后，您可至历史雷电预测情况页面查看具体预报结果")
+           alert("正在预测！\n预测完毕将生成预测文件，并自动更新本页面数据。\n预测完毕后，您可至历史雷电预测情况页面查看具体预报结果")
+      }
   },
 };
 </script>
@@ -123,7 +172,7 @@ export default {
     justify-content: space-around;
     position: relative;
 
-  
+
   }
 }
 

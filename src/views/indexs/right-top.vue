@@ -27,10 +27,15 @@ export default {
       option: {},
       pageflag: false,
       timer: null,
+      selectCity: '1',  //2023-4-6新增，点击选择城市
+      selectedCity:'2',  //2023-4-8新增，用于右上图表,看selectCity有无变化
+      numList:[],  //2023-4-8新增，用于右上图表
+      numList2:[],  //2023-4-8新增，用于右上图表
+      myData:[],  //2023-4-14新增，用于右上表获得每个城市的雷电数
     };
   },
   created() {
-   
+
   },
 
   mounted() {
@@ -40,6 +45,20 @@ export default {
     this.clearData();
   },
   methods: {
+   //2023-4-14新增
+  randGenerator(n, sum) {
+  var aryRet = [];
+  var fSumTmp = sum;
+  var iAcc = 0;
+  for (var i = 0; i < (n -1); i++) {
+  	var iTmp = Math.ceil(Math.random() * (fSumTmp / 2));
+    aryRet.push(iTmp);
+    fSumTmp -= iTmp;
+    iAcc += iTmp;
+  }
+  aryRet.push(sum-iAcc);
+  return aryRet;
+},
     clearData() {
       if (this.timer) {
         clearInterval(this.timer);
@@ -47,16 +66,77 @@ export default {
       }
     },
     getData() {
+         //2023-5-27新增，点击选择城市
+            this.$bus.$on('msg',(msg) => {
+               this.selectCity = msg;
+              //console.log(msg)
+            })
+
+         var d=new Date()
+            var month = d.getMonth()+1
+            var timeNow = d.getFullYear().toString()+("0" + month).slice(-2).toString()+("0" + d.getDate()).slice(-2).toString()+("0" + d.getHours()).slice(-2).toString()+"50"
+         //2023-4-8新增，用于右上图表
+           this.$http.post("http://101.43.203.170:8080/isWhereFor12h/",
+           {
+                   //下列参数需要修改为当前时间！！！！！！！！！！！！！！！！！！！！！？？？？？？？？？？？
+                   "period":timeNow, //2023-5-27新增，当前时间，最后2位为50表示预测文件
+                   "selectModel": "LightNet",
+                   "selectCity": this.selectCity, //2023-5-27新增，12h预测页面左侧地图点击选择的城市
+                  },
+           {
+              headers:{'Content-Type':'application/json'},
+              emulateJSON:true
+           }).then(
+              success=>{
+                 //self.backdata=JSON.parse(success.data)   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 //console.log("111111111111111111111111")
+                 //console.log(success['pos_h_2h'])
+
       this.pageflag = true;
       // this.pageflag =false
       currentGET("big4").then((res) => {
+
         if (!this.timer) {
           console.log("报警次数", res);
         }
         if (res.success) {
           this.countUserNumData = res.data;
           this.$nextTick(() => {
-            this.init(res.data.dateList, res.data.numList, res.data.numList2),
+            //2023-4-4新增（修改），右上角图表
+            //console.log(9999999999999999)
+            //console.log(res.data)
+
+            //2023-4-6新增，点击选择城市
+            this.$bus.$on('msg',(msg) => {
+               this.selectCity = msg;
+              //console.log(msg)
+            })
+
+            this.$bus.$on('msg1',(msg) => {
+               this.myData = msg;
+              //console.log("09090909")
+              //console.log(this.myData['北京市'])
+              //console.log(this.selectCity)
+            })
+
+
+            let datelist=["未来2h","未来4h","未来6h","未来8h","未来10h","未来12h"]
+            //let numList=[25,46,53,20,12,11]
+            //let numList2=[30,56,71,29,23,18]
+            if (this.selectCity != this.selectedCity)
+            {
+            this.numList=[success['pos_h_2h'],success['pos_h_4h'],success['pos_h_6h'],success['pos_h_8h'],success['pos_h_10h'],success['pos_h_12h']]
+            this.numList2=[success['pos_l_2h'],success['pos_l_4h'],success['pos_l_6h'],success['pos_l_8h'],success['pos_l_10h'],success['pos_l_12h']]
+            //this.numList = this.randGenerator(6,Math.ceil(this.myData[this.selectCity]/2))
+            //this.numList2 = this.randGenerator(6,Math.floor(this.myData[this.selectCity]/2))
+            console.log("09090909")
+            //console.log(this.myData[this.selectCity]/2)
+            console.log(this.myData)
+            this.selectedCity = this.selectCity
+
+            }
+            //this.init(res.data.dateList, res.data.numList, res.data.numList2),  //2023-4-4，原本的
+            this.init(datelist, this.numList, this.numList2),
               this.switper();
           });
         } else {
@@ -67,6 +147,13 @@ export default {
           });
         }
       });
+
+
+
+    }
+
+                  );
+
     },
     //轮询
     switper() {
@@ -156,7 +243,9 @@ export default {
             type: "line",
             smooth: true,
             symbol: "none", //去除点
-            name: "报警1次数",
+            //2023-4-4新增（修改）
+            //name: "报警1次数",
+            name: "发生概率>0.5雷电数",
             color: "rgba(252,144,16,.7)",
             areaStyle: {
                 //右，下，左，上
@@ -197,7 +286,9 @@ export default {
                     padding: [7, 14],
                     borderWidth: 0.5,
                     borderColor: "rgba(252,144,16,.5)",
-                    formatter: "报警1：{c}",
+                    //2023-4-4新增（修改）
+                    //formatter: "报警1：{c}",
+                    formatter: "发生概率>0.5雷电数最大值：{c}",
                   },
                 },
                 {
@@ -223,7 +314,9 @@ export default {
             type: "line",
             smooth: true,
             symbol: "none", //去除点
-            name: "报警2次数",
+            //2023-4-4新增（修改）
+            //name: "报警2次数",
+            name: "发生概率<0.5雷电数",
             color: "rgba(9,202,243,.7)",
             areaStyle: {
                 //右，下，左，上
@@ -264,7 +357,9 @@ export default {
                     borderRadius: 6,
                     borderColor: "rgba(9,202,243,.5)",
                     padding: [7, 14],
-                    formatter: "报警2：{c}",
+                    //2023-4-4新增（修改）
+                    //formatter: "报警2：{c}",
+                    formatter: "发生概率<0.5雷电数最大值：{c}",
                     borderWidth: 0.5,
                   },
                 },

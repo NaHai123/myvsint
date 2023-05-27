@@ -47,9 +47,18 @@ Object.keys(filters).forEach(k => Vue.filter(k, filters[k]));
 new Vue({
   router,
   store,
-  render: h => h(App)
+  render: h => h(App),
+     beforeCreate () {
+     //利用beforeCreate钩子函数挂载$bus，这是比较好的写法
+     Vue.prototype.$bus = this  //2023-4-6新增，点击选择城市
+   }
 }).$mount("#app");
 
-//新增 引入axios实现全局注册
+//2023-3-24新增  引入axios实现全局注册
 import axios from 'axios'
 Vue.prototype.$http = axios
+//import axios from 'axios'
+//const app = createApp(App) // 将默认改写为这样
+//app.provide('$axios', axios)
+
+//2023-4-6新增，点击选择城市

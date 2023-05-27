@@ -44,6 +44,8 @@ export default {
       period:[202007111600,202007111700,202007111800,202007111900,202007112000,202007112100,202007112200,202007112300,202007120000,202007120100,202007120200,202007120300],   //存储要读取的真实数据的时间段
       periodID:-1,    //用于period[periodID]取各时间段真实数据文件
       backdata:[],    //存放后端数据
+      selectCity: '',  //2023-4-6新增，点击选择城市
+      myData:[],  //2023-4-14新增，用于右上表获得每个城市的雷电数
     };
   },
   created() {},
@@ -109,6 +111,7 @@ export default {
       mydata = []
       newData = []
       this.periodID = (this.periodID+1)%12
+      /*
       this.$http.post("http://127.0.0.1:8000/model1/",
            {'uid':0,     //0表示取真实数据，1表示取预测数据
             'period':this.period[this.periodID]    //指示后端读取时间段202007111600的npy文件 ykcs
@@ -123,6 +126,62 @@ export default {
                  //sessionStorage.setItem("success",success.data)  //存在问题：接收后端数据需刷新两次页面
               }
                   );
+      */
+           var d=new Date()
+            var month = d.getMonth()+1
+            var timeNow = d.getFullYear().toString()+("0" + month).slice(-2).toString()+("0" + d.getDate()).slice(-2).toString()+("0" + d.getHours()).slice(-2).toString()+"50"
+           //2023-4-5新增，获取未来12h城市及其雷电数
+           this.$http.post("http://101.43.203.170:8080/isWhere/",
+           {
+                   //下列参数需要修改！！！！！！！！！！！！！！！！！！！！！？？？？？？？？？？？
+                   "period":timeNow, //2023-5-27新增，当前时间，最后2位为50表示预测文件
+                   "selectModel": "LightNet"
+                  },
+           {
+              headers:{'Content-Type':'application/json'},
+              emulateJSON:true
+           }).then(
+              success=>{
+                 //self.backdata=JSON.parse(success.data)   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
+                 //console.log("999999999999999999999999999")
+                 //console.log(success)
+      mydata.push({name: "北京市",value:success['dict']['北京市']})
+      newData.push({name: "北京市",value:[116.38,39.9,success['dict']['北京市']]})
+      mydata.push({name: "天津市",value:success['dict']['天津市']})
+      newData.push({name: "天津市",value:[117.2,39.13,success['dict']['天津市']]})
+      //mydata.push({name: "河北省",value:success['dict']['北京市']})
+      //newData.push({name: "河北省",value:[114.26,38.03,88]})
+      mydata.push({name: "石家庄市",value:success['dict']['石家庄市']})
+      newData.push({name: "石家庄市",value:[114.36,38.13,success['dict']['石家庄市']]})
+      mydata.push({name: "唐山市",value:success['dict']['唐山市']})
+      newData.push({name: "唐山市",value:[118.3,39.8,success['dict']['唐山市']]})
+      mydata.push({name: "秦皇岛市",value:success['dict']['秦皇岛市']})
+      newData.push({name: "秦皇岛市",value:[119.2,40.1,success['dict']['秦皇岛市']]})
+      mydata.push({name: "邯郸市",value:success['dict']['邯郸市']})
+      newData.push({name: "邯郸市",value:[114.54,36.6,success['dict']['邯郸市']]})
+      mydata.push({name: "邢台市",value:success['dict']['邢台市']})
+      newData.push({name: "邢台市",value:[114.85,37.15,success['dict']['邢台市']]})
+      mydata.push({name: "衡水市",value:success['dict']['衡水市']})
+      newData.push({name: "衡水市",value:[115.85,37.8,success['dict']['衡水市']]})
+      mydata.push({name: "沧州市",value:success['dict']['沧州市']})
+      newData.push({name: "沧州市",value:[116.85,38.2,success['dict']['沧州市']]})
+      mydata.push({name: "廊坊市",value:success['dict']['廊坊市']})
+      newData.push({name: "廊坊市",value:[116.48,39.15,success['dict']['廊坊市']]})
+      mydata.push({name: "保定市",value:success['dict']['保定市']})
+      newData.push({name: "保定市",value:[115.2,39,success['dict']['保定市']]})
+      mydata.push({name: "张家口市",value:success['dict']['张家口市']})
+      newData.push({name: "张家口市",value:[115,41,success['dict']['张家口市']]})
+      mydata.push({name: "承德市",value:success['dict']['承德市']})
+      newData.push({name: "承德市",value:[117.6,41.3,success['dict']['承德市']]})
+
+      this.myData = success['dict']
+      console.log(success['dict'])
+      this.init(name, mydata, newData);
+                       }
+                  );
+
+      /*
+      //2023-4-5新增，将下面注释掉
       mydata.push({name: "北京市",value:1779})
       newData.push({name: "北京市",value:[116.38,39.9,1779]})
       mydata.push({name: "海淀区",value:63})
@@ -158,6 +217,7 @@ export default {
       mydata.push({name: "承德市",value:66})
       newData.push({name: "承德市",value:[117.6,41.3,66]})
       this.init(name, mydata, newData);
+      */
     },
     init(name, data, data2) {
       console.log(data);
@@ -175,6 +235,7 @@ export default {
         visualMap: {
           left: 20,
           bottom: 20,
+          /* //2023-4-15新增注释
           pieces: [
             { gte: 1000, label: "1000个以上" }, // 不指定 max，表示 max 为无限大（Infinity）。
             { gte: 600, lte: 999, label: "600-999个" },
@@ -182,6 +243,15 @@ export default {
             { gte: 50, lte: 199, label: "49-199个" },
             { gte: 10, lte: 49, label: "10-49个" },
             { lte: 9, label: "1-9个" }, // 不指定 min，表示 min 为无限大（-Infinity）。
+          ],
+          */
+          pieces: [
+            { gte: 19, label: "19个以上" }, // 不指定 max，表示 max 为无限大（Infinity）。
+            { gte: 15, lte: 18, label: "15-18个" },
+            { gte: 11, lte: 14, label: "11-14个" },
+            { gte: 7, lte: 10, label: "7-10个" },
+            { gte: 3, lte: 6, label: "3-6个" },
+            { lte: 2, label: "1-2个" }, // 不指定 min，表示 min 为无限大（-Infinity）。
           ],
           inRange: {
             // 渐变颜色，从小到大
@@ -316,7 +386,7 @@ export default {
             },
             label: {
               formatter: (param) => {
-                return param.name.slice(0, 2);
+                return param.name.slice(0, 4);   //2023-05-05新增，slice(0, 2)修改为slice(0, 4)，解决城市名字显示不全问题
               },
 
               fontSize: 15,  //省市名、地名文字的大小
@@ -357,11 +427,33 @@ export default {
       //单击切换到级地图，当mapCode有值,说明可以切换到下级地图
       this.$refs.CenterMap.chart.on("click", (params) => {
         // console.log(params);
+        //console.log("666")
+        //console.log(params.name)
+
+        //2023-4-6新增，点击选择城市
+        this.selectCity = params.name
+        //$bus.$emit("aMsg", this.selectCity);
+        //$bus.$emit("aMsg", '来自A页面的消息');
+        //const bc = new BroadcastChannel("1111");
+        this.$bus.$emit('msg', this.selectCity)
+        this.$bus.$emit('msg1', this.myData)
+
         let xzqData = xzqCode[params.name];
         if (xzqData) {
+          //console.log("777")
+          //console.log(xzqData)
           this.getData(xzqData.adcode);
         } else {
+          //console.log("888")
+          //console.log(xzqData)
+          //2023-3-30新增，点击省级地图跳转到历史预测页面显示数据
           this.message("暂无下级地市!");
+          //window.location.href="http://localhost:8002/#/map";
+          //location.replace("http://localhost:8002/#/map");
+          //location.assign("http://localhost:8002/#/map");
+          alert("右上雷电高发时刻已更新为当前城市数据，现即将跳转页面显示可视化预报结果");
+          //window.open("http://localhost:8002/#/map", "预测数据展示");  //本地版
+          window.open("http://101.43.203.170:13886/#/map", "预测数据展示");  //部署版
         }
       });
       this.echartBindClick = true;
