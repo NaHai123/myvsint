@@ -1,7 +1,14 @@
 <template>
 	<div class="manage_page fillcontain">
+	<!--2023-4-13新增注释，隐藏/显示侧边栏
+	<el-button type="primary"
+		style="position:absolute;z-index:2;margin-top:8%;margin-left:10%;color:white;background:#383838;border-color:#808080;"
+		@click="showAndHidden1">
+		隐藏/显示侧边栏
+	</el-button>
+	-->
 		<el-row style="height: 100%;">
-	  		<el-col :span="4"  style="min-height: 100%; background-color: #324057;">
+	  		<el-col id="sidebar1" :span="4" style="min-height: 100%; background-color: #324057;">
 				<el-menu text-align:Left:default-active="defaultActive" style="min-height: 100%;" theme="dark" router>
 					<el-menu-item index="manage"><i class="el-icon-menu"></i>服务器数据概览</el-menu-item>
 
@@ -46,7 +53,7 @@
 					</el-submenu>
 				</el-menu>
 			</el-col>
-			<el-col :span="20" style="height: 100%;overflow: auto;">
+			<el-col id="sidebar2" :span="0" style="height: 100%;overflow: auto;">
 				<keep-alive>
 				    <router-view></router-view>
 				</keep-alive>
@@ -57,10 +64,45 @@
 
 <script>
     export default {
+        data () {
+           return {
+               isHide:1,
+           }
+        },
 		computed: {
 			defaultActive: function(){
 				return this.$route.path.replace('/', '');
 			}
+		},
+		methods: {
+		   //2023-4-3新增，用于选择是否显示平台侧边栏
+           showAndHidden1(){
+            var div1=document.getElementById("sidebar1");
+            var div2=document.getElementById("sidebar2");
+            console.log(div2)
+            if(div1.style.display=='block')
+            {
+
+                div1.style.display='none';
+                this.isHide = 1;
+                //window.location.reload()
+                //$("#sidebar2").load(location.href + "#sidebar2","")
+                //window.location.reload("#sidebar2")
+                //div2.$(Load())
+                //$('#sidebar2').load('#sidebar2');
+                //window.location.reload(false)
+                //window.location.reload(true)
+                //$("#sidebar2").load(location.href+" #sidebar2>*","");
+                //$( "#sidebar2" ).load(window.location.href + " #sidebar2" );
+                //$("#sidebar2").load(location.href + " #sidebar2>*", "");
+                //$('#sidebar2').load(document.URL +  ' #sidebar2');
+            }
+            else
+            {
+                div1.style.display='block';
+                this.isHide = 0;
+            }
+            },
 		},
     }
 </script>

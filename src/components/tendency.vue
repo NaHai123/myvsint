@@ -49,7 +49,8 @@
                     xAxis:  {
                         type: 'category',
                         boundaryGap: false,
-                        data: this.sevenDay
+                        data: ["0时\n0周\n0月","4时\n1周\n1月","8时\n2周\n2月","12时\n3周\n3月","16时\n4周\n4月","20时\n5周\n5月","24时(当前)\n6周(当前)\n6月(当前)"]
+                        //data: this.sevenDay  //2023-4-13新增注释
                     },
                     yAxis: [
                         {

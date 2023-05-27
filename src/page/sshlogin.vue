@@ -1,10 +1,10 @@
 <template>
-    
 
 
 
 
-    
+
+
     <div class="fillcontain">
 
 
@@ -12,7 +12,7 @@
 
 
 
-        
+
 
 
 
@@ -30,7 +30,7 @@
 
 
 
-       
+
       <el-row>
         <el-col :span="24">
             <div class="grid-content bg-purple-dark" style="text-align: center;">
@@ -84,10 +84,24 @@
                 currentPage: 1,
                 connectData:{
                     operate: 'connect',
-                    host: '39.101.142.88',
+
+                    //host: '39.101.142.88',
+                    //password: '$M%HbhmfRHL&dm7jBo'
+                    //username: 'root',
+
+                    //host: '101.43.203.170',
+                    //password: '12332134Ll'
+                    //username: 'root',
+
+                    //2023-4-14新增，模型服务器
+                    host: '172.31.246.20',
+                    username: 'LightDemo',
+                    password: 'visLightintDemo123',
                     port: '22',
-                    username: 'root',
-                    password: '$M%HbhmfRHL&dm7jBo'
+
+
+
+
                 },
                 type: '1',//连接类型
             }
@@ -95,7 +109,7 @@
     	components: {
     		headTop,
     	},
-    
+
         methods: {
                 reset: function () {
                 this.connectData.host = '';
@@ -105,7 +119,7 @@
             test: function () {
                 console.log(JSON.stringify(storage.state));
                 //将json对象转换为json字符串，传给后端
-                console.log(JSON.stringify(storage.state.sshlogin) 
+                console.log(JSON.stringify(storage.state.sshlogin)
                 )
             },
                onSubmit: function () {
@@ -113,7 +127,7 @@
 				// adminList.vue
                 storage.commit('saveSSHLoginInfo', this.connectData)
               // storage = localStorage;
-                
+
              //   storage.setItem("connectData", JSON.stringify(this.connectData));
               //  console.log(storage.getItem("connectData"))
                 if(this.type == '1'){

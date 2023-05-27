@@ -10,29 +10,39 @@
             <span style="border-radius: 40px;opacity:70%;color:white;padding:1px;background:#505050;" class="data_num head">
                  选择轮播数据模型来源
                  <select name="modelSelect" v-model="selectModel" @change="getPollFileList">
-                      <option value="LightNet">LightNet</option>
+                      <option value="LightNet">L-MoE</option>
                       <option value="ADSNet">ADSNet</option>
                  </select>
                  ：
                  &nbsp;&nbsp;真实雷电数据日期时间为{{this.period[this.periodID]}},
                  预测雷电数据日期时间为{{this.predictPeriod[this.predictPeriodID]}},
-                 来源模型为{{this.selectModel}}
+                  <span v-if="selectModel=='LightNet'">
+                     来源模型为L-MoE
+                  </span>
+                  <span v-if="selectModel=='ADSNet'">
+                     来源模型为ADSNet
+                  </span>
+                 <!-- 来源模型为{{this.selectModel}} -->
             </span>
             <el-progress style="border-radius: 40px;opacity:70%;color:white;padding:1px;background:#505050;" :text-inside="true" :stroke-width="30" :percentage="percent" />
           </div>
 
           <el-col :span="4">
-          <div class="data_list today_head"
+          <div
                style="border-radius: 40px;padding:1px;color:white;background:#505050;opacity:70%;font-size: 40px;position:absolute;z-index:3;margin-top:2%;margin-left:4%;">
                       <span class="data_num head">&nbsp;&nbsp;历史预测雷电发生情况：</span>
           </div></el-col>
           <div style="border-radius: 40px;padding:1px;color:white;background:#505050;opacity:70%;font-size: 35px;position:absolute;z-index:3;margin-top:5.8%;margin-left:4%;">
                &nbsp;&nbsp;{{this.points.length}}&nbsp;&nbsp;
+           <!-- 2023-4-15新增 <el-button type="primary" style="position:absolute;z-index:2;margin-top:8%;margin-left:10%;color:white;background:#383838;border-color:#808080;"  @click="showAndHidden1">隐藏/显示图表</el-button>
+           -->
           </div>
-          <div
+ <!-- 2023-4-15新增
+          <div id="tendency1"
              style="border-radius: 40px;width:35%;height:47%;padding:1px;background:#D0D0D0;opacity:70%;font-size: 40px;position:absolute;z-index:2;margin-top:9%;margin-left:4%;">
              <tendencyForMap :sevenDate='sevenDate' :sevenDay='sevenDay'></tendencyForMap>
           </div>
+          -->
           <div>
           <el-button type="primary" style="opacity:70%;color:white;position:absolute;z-index:2;font-size:20px;background:#505050;border-color:#808080;padding:10px;border-radius: 40px;"
            v-on:click="pauseMap">暂停</el-button>
@@ -44,7 +54,7 @@
 <form style="opacity:70%;color:white;margin-left:50%;position:absolute;z-index:2;font-size:20px;background:#505050;border-color:#808080;padding:10px;border-radius: 40px;" method="post">
      可选择展示历史数据时间：
      <select v-model="selectModel">
-         <option value="LightNet">LightNet</option>
+         <option value="LightNet">L-MoE</option>
          <option value="ADSNet">ADSNet</option>
       </select>
       <input v-model="selectDataFileName" type="datetime-local" value="2023-02-24T13:59:59"/>
@@ -95,7 +105,7 @@ export default {
      //2023-3-20新增，轮播文件列表获取
      //this.getPollFileList();this.getPollFileList();  //保存，待修改
           var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
-          this.$http.post("http://127.0.0.1:8000/getnpynames/",
+          this.$http.post("http://101.43.203.170:13888/getnpynames/",
            {'uid':100,     //0表示取真实数据，1表示取预测数据，100表示开始时读取后端数据文件列表
             'selectModel': this.selectModel,  //选择轮播哪个模型的数据
                   },
@@ -119,13 +129,19 @@ export default {
                   );
   },
   methods: {
+      //2023-3-27新增，用于选择是否显示图表
+      showAndHidden1(){
+            var div1=document.getElementById("tendency1");
+            if(div1.style.display=='block') div1.style.display='none';
+            else div1.style.display='block';
+      },
       //2023-3-20新增，轮播文件列表获取
       getPollFileList()
       {
                //2023-3-10新增，从后端获取已有数据文件名
       alert("轮播数据模型来源已切换！")
         var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
-          this.$http.post("http://127.0.0.1:8000/getnpynames/",
+          this.$http.post("http://101.43.203.170:13888/getnpynames/",
            {'uid':100,     //0表示取真实数据，1表示取预测数据，100表示开始时读取后端数据文件列表
             'selectModel': this.selectModel,  //选择轮播哪个模型的数据
                   },
@@ -186,12 +202,13 @@ export default {
       this.points=[];
       //this.init();
             console.log("正在读取选择时间的真实雷电数据")
+
             this.percent = 0   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数。 选择某时间数据显示时进度条置为0，因为进度条为轮播进度。
             var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
-            this.$http.post("http://127.0.0.1:8000/readRealData/",
+            this.$http.post("http://101.43.203.170:8080/readRealData/",
            {'uid':20,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             //'period':this.period[this.periodID]    指示后端读取时间段202007111600的npy文件 ykcs
-            'period':this.selectDataFileName.replace(/-/g,'').replace(/T/g,'').substring(0,Object.keys(this.selectDataFileName).length-6)+'00.npy',  //返回给后端的格式是202007111600.npy
+            'period':this.selectDataFileName.replace(/-/g,'').replace(/T/g,'').substring(0,Object.keys(this.selectDataFileName).length-6)+'00',  //返回给后端的格式是202007111600
             'selectModel': this.selectModel
                   },
            {
@@ -207,6 +224,9 @@ export default {
                   position = new BMap.Point(self.backdata['point'][c][0],self.backdata['point'][c][1])
                   self.points.push(position)
                   }
+                  console.log("8888")
+                  console.log(this.points)
+                  if (this.points.length == 1){alert("无所选时间的历史雷电数据")}
                   this.showPoly(this.points,this.baiduMap);
               }
                   );
@@ -219,10 +239,10 @@ export default {
       console.log("选择显示的后端预测数据文件名称")
       console.log(this.selectDataFileName.replace(/-/g,'').replace(/T/g,'').substring(0,Object.keys(this.selectDataFileName).length-6)+'50.npy')
      var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
-     this.$http.post("http://127.0.0.1:8000/readForecastData/",
+     this.$http.post("http://101.43.203.170:8080/readRealData/",
            {'uid':21,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             //'period':this.predictPeriod[this.predictPeriodID]    //指示后端读取对于预测时间段predictPeriodID的npy文件 ykcs
-            'period':this.selectDataFileName.replace(/-/g,'').replace(/T/g,'').substring(0,Object.keys(this.selectDataFileName).length-6)+'50.npy',  //返回给后端的格式是202007111650.npy
+            'period':this.selectDataFileName.replace(/-/g,'').replace(/T/g,'').substring(0,Object.keys(this.selectDataFileName).length-6)+'50',  //返回给后端的格式是202007111650
             'selectModel': this.selectModel
                   },
            {
@@ -236,8 +256,8 @@ export default {
                   console.log("正在读取选择时间的预测雷电数据")
                  for (let c = 0; c < self.predictBackdata['point'].length; c++) {
                   //!!!注意，此处增加了模拟数据，以用于前期展示。后期需删除掉点b 以及 a中的偏离!!!
-                  let a = {"lng":self.predictBackdata['point'][c][0],"lat":self.predictBackdata['point'][c][1],"count":50+Math.random()*150}
-                  let b = {"lng":self.predictBackdata['point'][c][0]+Math.random(),"lat":self.predictBackdata['point'][c][1]+Math.random(),"count":50+Math.random()*100}
+                  let a = {"lng":self.predictBackdata['point'][c][0],"lat":self.predictBackdata['point'][c][1],"count":50+Math.random()*150*self.predictBackdata['point'][c][2]}
+                  //let b = {"lng":self.predictBackdata['point'][c][0]+Math.random(),"lat":self.predictBackdata['point'][c][1]+Math.random(),"count":50+Math.random()*100}
                   self.predictPoints.push(a)
                   self.predictPoints.push(b)
                   }
@@ -315,9 +335,9 @@ export default {
 	 //获取后端预测的天气数据
 	 this.predictPeriodID = (this.predictPeriodID+1)%this.backDataListLength
      var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
-     this.$http.post("http://127.0.0.1:8000/readForecastData/",
+     this.$http.post("http://101.43.203.170:8080/readRealData/",
            {'uid':1,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
-            'period':this.predictPeriod[this.predictPeriodID],  //指示后端读取对于预测时间段predictPeriodID的npy文件 ykcs
+            'period':this.predictPeriod[this.predictPeriodID].replace(".npy",""),  //指示后端读取对于预测时间段predictPeriodID的npy文件 ykcs
             'selectModel': this.selectModel
             //'period':this.selectDataFileName[1]
                   },
@@ -335,8 +355,8 @@ export default {
 
                  for (let c = 0; c < self.predictBackdata['point'].length; c++) {
                   //!!!注意，此处增加了模拟数据，以用于前期展示。后期需删除掉点b 以及 a中的偏离!!!
-                  let a = {"lng":self.predictBackdata['point'][c][0],"lat":self.predictBackdata['point'][c][1],"count":50+Math.random()*150}
-                  let b = {"lng":self.predictBackdata['point'][c][0]+Math.random(),"lat":self.predictBackdata['point'][c][1]+Math.random(),"count":50+Math.random()*100}
+                  let a = {"lng":self.predictBackdata['point'][c][0],"lat":self.predictBackdata['point'][c][1],"count":50+Math.random()*150*self.predictBackdata['point'][c][2]}
+                  //let b = {"lng":self.predictBackdata['point'][c][0]+Math.random(),"lat":self.predictBackdata['point'][c][1]+Math.random(),"count":50+Math.random()*100}
                   self.predictPoints.push(a)
                   self.predictPoints.push(b)
                   }
@@ -472,10 +492,10 @@ export default {
             console.log("periodID"+" "+this.periodID);
             this.percent = Number((100*(this.periodID)/(this.backDataListLength-1)).toFixed(2))   //底部进度条进度，表示读取时间段，0为最近时间段，100%为最远时间段;percent保留2位小数
             var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
-            await this.$http.post("http://127.0.0.1:8000/readRealData/",
+            await this.$http.post("http://101.43.203.170:8080/readRealData/",
            {'uid':0,     //0表示取真实数据，1表示取预测数据，20表示读取选定时间的真实数据，21表示读取选定时间的预测数据
             //'period':this.backDataList[this.periodID][0]    指示后端读取时间段202007111600的npy文件 ykcs
-            'period':this.period[this.periodID],
+            'period':this.period[this.periodID].replace(".npy",""),
             'selectModel': this.selectModel
             //'period':this.selectDataFileName[0]
                   },
@@ -532,7 +552,7 @@ export default {
    if (this.timer && this.pause!=1){
           clearInterval(this.timer);
   }else {
-       this.timer = setInterval( async ()=>{map.clearOverlays();this.backdata=[];this.points=[];await this.init();this.showPoly(this.points,map);this.addZoomControl(map);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(map);this.ChartUpdate();},3000 );  //5000ms刷新一次
+       this.timer = setInterval( async ()=>{map.clearOverlays();this.backdata=[];this.points=[];await this.init();this.showPoly(this.points,map);this.addZoomControl(map);this.backdata=[];this.predictPoints=[];this.predictANDheatmap(map);this.ChartUpdate();},5000 );  //5000ms刷新一次
   }
   },
  },

@@ -169,18 +169,18 @@ data(){
 return{
  selectConfig:[],   //2023-3-24新增，记录选择哪个配置
  configList:[],     //2023-3-23新增，接受传来的配置列表
- history1 :"No error reporting history now",
- history2 :"No error reporting history now",
- history3 :"No error reporting history now",
+ history1 :"history1",
+ history2 :"history2",
+ history3 :"history3",
  kind:'',
  trainer:'',
  cost:'',
  state:"非训练状态",
  start:'',
  end:'',
- h1:'暂无数据',
- h2:"暂无数据",
- h3:"暂无数据",
+ h1:'historical data1',
+ h2:"historical data2",
+ h3:"historical data3",
  epoch:'',
  memory:'',
  loss:'',
@@ -247,7 +247,7 @@ this.h3=res.data.h3
          alert(this.selectConfig)
          //根据选择的配置获取信息
          	console.log("正在获取选择的配置的相关信息！")
-            this.$http.post("http://101.43.203.170:8080/historyInfo",
+            this.$http.post("http://172.31.246.20:8081/train/historyInfo",
            {
               "configName":this.selectConfig
                   },
@@ -285,10 +285,10 @@ this.h3=res.data.h3
                                this.h2="暂无数据"
 
                              //this.h3=res.data.h3   //注意！，待修改，返回数据数量不足
-                               //this.epoch=success.data['epoch']
-                               //this.memory=success.data['memory']
-                               //this.loss=success.data['loss']
-                               //this.curren=success.data['maxEts']
+                               this.epoch=success.data['epoch']
+                               this.memory=success.data['memory']
+                               this.loss=success.data['loss']
+                               this.curren=success.data['maxEts']
                                this.startORend()
                                this.end = ''
 
@@ -300,7 +300,7 @@ this.h3=res.data.h3
      {
 			//获取配置列表
 			console.log("正在获取配置列表！")
-            this.$http.get("http://101.43.203.170:8080/getConfigList",
+            this.$http.get("http://172.31.246.20:8081/train/getConfigList",
            {
                   },
            {
@@ -344,7 +344,7 @@ this.h3=res.data.h3
      startORend(){
         if (this.state === "非训练状态")
         {
-                this.$http.post("http://101.43.203.170:8080/modelTraining/",
+                this.$http.post("http://127.0.0.1:8000/modelTraining/",
                 {'uid':"visitor",     //表示请求由模型训练监控页面发出
                        },
                 {
@@ -356,12 +356,6 @@ this.h3=res.data.h3
                             }
                       );
                 this.state = "训练中"
-                //2023-4-14新增，用于获取训练状态
-                this.epoch='1/200'
-                this.memory = (88 + Math.random()*7).toFixed(1) + '%'
-                this.cost = this.memory
-                this.loss = (10.22 + Math.random()*5).toFixed(2)
-                this.curren = (0.032 + Math.random()*0.02).toFixed(3)
                 let d=new Date()
                 this.start = ("0" + d.getHours()).slice(-2).toString()+":"+("0" + d.getMinutes()).slice(-2).toString()+" "+d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate()
                 document.getElementById("training").innerHTML = "终止训练"

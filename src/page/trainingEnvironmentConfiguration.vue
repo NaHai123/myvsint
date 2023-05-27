@@ -424,65 +424,23 @@
 			*/
 			//2023-3-23新增
 			submitForm(formName) {
-				this.$refs[formName].validate(async (valid) => {
-					if (valid) {
-						Object.assign(this.formData, {activities: this.activities}, {
-							category: this.selectedCategory.join('/')
-						})
-						try{
-							let result = await addShop(this.formData);
-							if (result.status == 1) {
-								this.$message({
-					            	type: 'success',
-					            	message: '添加成功'
-					          	});
-					          	this.formData = {
-									name: '', //店铺名称
-									address: '', //地址
-									latitude: '',
-									longitude: '',
-									description: '', //介绍
-									phone: '',
-									promotion_info: '',
-									float_delivery_fee: 5, //运费
-									float_minimum_order_amount: 20, //起价
-									is_premium: true,
-									delivery_mode: true,
-									new: true,
-									bao: true,
-									zhun: true,
-									piao: true,
-									startTime: '',
-				       	 			endTime: '',
-				       	 			image_path: '',
-				       	 			business_license_image: '',
-				       	 			catering_service_license_image: '',
-						        };
-						        this.selectedCategory = ['快餐便当', '简餐'];
-						        this.activities = [{
-						        	icon_name: '减',
-						        	name: '满减优惠',
-						        	description: '满30减5，满60减8',
-							    }];
-							}else{
-								this.$message({
-					            	type: 'error',
-					            	message: result.message
-					          	});
-							}
-							console.log(result)
-						}catch(err){
-							console.log(err)
-						}
-					} else {
-						this.$notify.error({
-							title: '错误',
-							message: '请检查输入是否正确',
-							offset: 100
-						});
-						return false;
-					}
-				});
+			//创建配置
+            this.$http.post("http://101.43.203.170:8080/createConfig",
+           {  'condaPath': this.modelConfigList.name,  //如字符串'LMoeEnvName(python3.6版)'
+              'logPath': this.Log.path,
+              'mainPath': this.modelMainPath.path,
+              'modelName': this.modelConfig.modelname,   //模型名称
+              'name': this.modelConfig.configname,     //配置名称
+                  },
+           {
+              headers:{'Content-Type':'application/json'},
+              emulateJSON:true
+           }).then(
+              success=>{
+                             console.log("code=")
+                             console.log(success.data['code'])
+                       }
+                  );
 			},
 		}
     }

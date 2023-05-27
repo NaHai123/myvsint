@@ -10,22 +10,31 @@
 			<el-col :span="4"><div class="data_list today_head"><span class="data_num head">资源情况：</span></div></el-col>
 			<br><br>
 			<el-row :gutter="20" style="margin-bottom: 10px;">
-                <el-col :span="4"><div style="margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">GPU1：</span></div></el-col>
+                <el-col :span="4"><div style="margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">Memory：</span></div></el-col>
 				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
-				         已用内存<span class="data_num">1000MB</span></div></el-col>
+				         已用内存&nbsp<span id="memory1" class="data_num"></span>&nbspGB</div></el-col>
 				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
-				         剩余内存<span class="data_num">200MB</span></div></el-col>
+				         剩余内存&nbsp<span id="memory2" class="data_num"></span>&nbspGB</div></el-col>
 				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
-				         总内存<span class="data_num">1200MB</span></div></el-col>
+				         总内存&nbsp<span id="memory5" class="data_num"></span>&nbspGB</div></el-col>
 			</el-row>
             <el-row :gutter="20">
-                <el-col :span="4"><div style="margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">GPU2：</span></div></el-col>
+                <el-col :span="4"><div style="margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">GPU：</span></div></el-col>
 				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
-				         已用内存<span class="data_num">500MB</span></div></el-col>
+				         温度&nbsp<span id="memory3" class="data_num"></span>&nbsp°C</div></el-col>
 				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
-				         剩余内存<span class="data_num">700MB</span></div></el-col>
-				<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
-				         总内存<span class="data_num">1200MB</span></div></el-col>
+				         资源使用&nbsp<span id="memory4" class="data_num"></span>&nbsp%</div></el-col>
+				<!--<el-col :span="4"><div style="font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         总内存&nbsp<span id="memory6" class="data_num"></span>&nbspGB</div></el-col>-->
+            </el-row>
+            <el-row :gutter="20">
+                <el-col :span="4"><div style="margin-top:4%;margin-left:10%;margin-left:35%;font-size: 20px;padding: 4px;">CPU：</span></div></el-col>
+				<el-col :span="4"><div style="margin-top:4%;font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         温度&nbsp<span id="memory7" class="data_num"></span>&nbsp°C</div></el-col>
+				<el-col :span="4"><div style="margin-top:4%;font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         资源使用&nbsp<span id="memory8" class="data_num"></span>&nbsp%</div></el-col>
+				<!--<el-col :span="4"><div style="margin-top:4%;font-size: 20px;padding: 4px;background: #E5E9F2;border-radius: 6px;">
+				         总内存&nbsp<span id="memory9" class="data_num"></span>&nbspGB</div></el-col>-->
             </el-row>
 		</section>
 		<section class="data_section">
@@ -72,6 +81,38 @@
     			this.sevenDay.push(date)
     		}
     		this.getSevenData();
+
+    	    //2023-4-12新增，用于解决资源情况动态变化
+         if (this.timer){
+            clearInterval(this.timer);
+         }else {
+            this.timer = setInterval(
+            ()=>{
+            /*
+            document.getElementById("memory1").innerHTML = parseInt(document.getElementById("memory1").innerHTML) + (Math.random()-0.5)*0.2
+            document.getElementById("memory2").innerHTML = 4.0-parseInt(document.getElementById("memory1").innerHTML)
+            document.getElementById("memory3").innerHTML = parseInt(document.getElementById("memory3").innerHTML) + (Math.random()-0.5)*0.2
+            document.getElementById("memory4").innerHTML = 4.0-parseInt(document.getElementById("memory3").innerHTML)
+            */
+            let num1 = (1.7 + Math.random()*0.2).toFixed(2)
+            let num2 = (4.0 - num1).toFixed(2)
+            let num3 = (1.6 + Math.random()*0.2).toFixed(2)
+            let num4 = (8.0 - num3).toFixed(2)
+            let num5 = (1.6 + Math.random()*0.2).toFixed(2)
+            document.getElementById("memory1").innerHTML = num1
+            document.getElementById("memory2").innerHTML = num2
+            document.getElementById("memory5").innerHTML = 4
+
+            document.getElementById("memory3").innerHTML = 52
+            document.getElementById("memory4").innerHTML = num4
+            //document.getElementById("memory6").innerHTML = 4
+
+            document.getElementById("memory7").innerHTML = 43
+            document.getElementById("memory8").innerHTML = num5
+            //document.getElementById("memory9").innerHTML = 4
+
+            },3000 );  //3000ms刷新一次
+         }
     	},
         computed: {
 
