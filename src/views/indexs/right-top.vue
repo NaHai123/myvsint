@@ -76,7 +76,7 @@ export default {
             var month = d.getMonth()+1
             var timeNow = d.getFullYear().toString()+("0" + month).slice(-2).toString()+("0" + d.getDate()).slice(-2).toString()+("0" + d.getHours()).slice(-2).toString()+"50"
          //2023-4-8新增，用于右上图表
-           this.$http.post("http://101.43.203.170:8080/isWhereFor12h/",
+           this.$http.post("http://101.43.203.170:8080/isWhereFor12h",
            {
                    //下列参数需要修改为当前时间！！！！！！！！！！！！！！！！！！！！！？？？？？？？？？？？
                    "period":timeNow, //2023-5-27新增，当前时间，最后2位为50表示预测文件

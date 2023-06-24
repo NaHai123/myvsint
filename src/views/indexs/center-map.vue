@@ -131,7 +131,7 @@ export default {
             var month = d.getMonth()+1
             var timeNow = d.getFullYear().toString()+("0" + month).slice(-2).toString()+("0" + d.getDate()).slice(-2).toString()+("0" + d.getHours()).slice(-2).toString()+"50"
            //2023-4-5新增，获取未来12h城市及其雷电数
-           this.$http.post("http://101.43.203.170:8080/isWhere/",
+           this.$http.post("http://101.43.203.170:8080/isWhere",
            {
                    //下列参数需要修改！！！！！！！！！！！！！！！！！！！！！？？？？？？？？？？？
                    "period":timeNow, //2023-5-27新增，当前时间，最后2位为50表示预测文件
