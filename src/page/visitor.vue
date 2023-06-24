@@ -344,8 +344,9 @@ this.h3=res.data.h3
      startORend(){
         if (this.state === "非训练状态")
         {
+                var selectedConfig = this.selectConfig;
                 this.$http.post("http://101.43.203.170:8080/modelTraining/",
-                {'uid':"visitor",     //表示请求由模型训练监控页面发出
+                {'uid':selectedConfig.replace(/[^a-zA-Z]/g,''),  //提取配置全称中的字母,如从"LightNet雷电预报模型"提取出"LightNet"。2023-06-20新增
                        },
                 {
                    headers:{'Content-Type':'application/json'},
@@ -370,7 +371,7 @@ this.h3=res.data.h3
         }
         else
         {
-                this.$http.post("http://127.0.0.1:8000/terminateModelTraining/",
+                this.$http.post("http://101.43.203.170:8080/terminateModelTraining/",
                 {'uid':"visitor",     //表示请求由模型训练监控页面发出
                        },
                 {

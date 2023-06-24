@@ -10,14 +10,14 @@
             <span style="border-radius: 40px;opacity:70%;color:white;padding:1px;background:#505050;" class="data_num head">
                  选择轮播数据模型来源
                  <select name="modelSelect" v-model="selectModel" @change="getPollFileList">
-                      <option value="LightNet">L-MoE</option>
+                      <option value="LightNet">LightNet</option>
                       <option value="ADSNet">ADSNet</option>
                  </select>
                  ：
                  &nbsp;&nbsp;真实雷电数据日期时间为{{this.period[this.periodID]}},
                  预测雷电数据日期时间为{{this.predictPeriod[this.predictPeriodID]}},
                   <span v-if="selectModel=='LightNet'">
-                     来源模型为L-MoE
+                     来源模型为LightNet
                   </span>
                   <span v-if="selectModel=='ADSNet'">
                      来源模型为ADSNet
@@ -54,7 +54,7 @@
 <form style="opacity:70%;color:white;margin-left:50%;position:absolute;z-index:2;font-size:20px;background:#505050;border-color:#808080;padding:10px;border-radius: 40px;" method="post">
      可选择展示历史数据时间：
      <select v-model="selectModel">
-         <option value="LightNet">L-MoE</option>
+         <option value="LightNet">LightNet</option>
          <option value="ADSNet">ADSNet</option>
       </select>
       <input v-model="selectDataFileName" type="datetime-local" value="2023-02-24T13:59:59"/>
@@ -102,31 +102,23 @@ export default {
     created(){
      //this.init();
      this.loadBMapLib();
-     //2023-3-20新增，轮播文件列表获取
-     //this.getPollFileList();this.getPollFileList();  //保存，待修改
+     //2023-6-20新增，轮播文件列表获取，即取过去24h
+     let d=new Date()
+var temp = [    '0000','0100','0200','0300','0400','0500',
+                '0600','0700','0800','0900','1000','1100',
+                '1200','1300','1400','1500','1600','1700',
+                '1800','1900','2000','2100','2200','2300']
+var month = d.getMonth()+1
+var a = d.getFullYear().toString()+("0" + month).slice(-2).toString()+("0" + (parseInt(d.getDate())-1).toString()).slice(-2).toString()
           var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
-          this.$http.post("http://101.43.203.170:13888/getnpynames/",
-           {'uid':100,     //0表示取真实数据，1表示取预测数据，100表示开始时读取后端数据文件列表
-            'selectModel': this.selectModel,  //选择轮播哪个模型的数据
-                  },
-           {
-              headers:{'Content-Type':'application/json'},
-              emulateJSON:true,
-              //async: false,  //将axios设置为同步，似乎设置不成功？
-           }).then(
-              success=>{
-                  self.backDataList=JSON.parse(success.data)   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                  //sessionStorage.setItem("getSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
-                  console.log("后端数据文件列表及预测、真实文件对数")
-                  self.backDataListLength = self.backDataList['fileNameList'][0].length  //注意：此处需保证fileNameList中两个文件名数组长度相同
-                  console.log(self.backDataList)
-                  console.log(self.backDataListLength)
-                  for (let c = 0; c < self.backDataListLength; c++) {
-                      self.period.push(self.backDataList['fileNameList'][0][c])
-                      self.predictPeriod.push(self.backDataList['fileNameList'][1][c])
-                  }
-              }
-                  );
+           self.backDataListLength = temp.length
+           for (let c = 0; c < self.backDataListLength; c++) {
+                  self.period.push(a+temp[c])
+                  self.predictPeriod.push((a+temp[c]).slice(0,-2)+'50')
+           }
+           console.log("轮播数据时间为过去一整天24个时段")
+           console.log(self.period)
+      console.log(self.predictPeriod)
   },
   methods: {
       //2023-3-27新增，用于选择是否显示图表
@@ -138,37 +130,25 @@ export default {
       //2023-3-20新增，轮播文件列表获取
       getPollFileList()
       {
-               //2023-3-10新增，从后端获取已有数据文件名
       alert("轮播数据模型来源已切换！")
-        var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
-          this.$http.post("http://101.43.203.170:13888/getnpynames/",
-           {'uid':100,     //0表示取真实数据，1表示取预测数据，100表示开始时读取后端数据文件列表
-            'selectModel': this.selectModel,  //选择轮播哪个模型的数据
-                  },
-           {
-              headers:{'Content-Type':'application/json'},
-              emulateJSON:true,
-              //async: false,  //将axios设置为同步，似乎设置不成功？
-           }).then(
-              success=>{
-                  self.backDataList=JSON.parse(success.data)   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                  //sessionStorage.setItem("getSuccess",success.data)  //存在问题：接收后端数据需刷新两次页面
-                  console.log("后端数据文件列表及预测、真实文件对数")
-                  self.backDataListLength = self.backDataList['fileNameList'][0].length  //注意：此处需保证fileNameList中两个文件名数组长度相同
-                  console.log(self.backDataList)
-                  console.log(self.backDataListLength)
-                  self.period = []    //更换轮播数据模型来源时需清空
-                  self.predictPeriod = []    //更换轮播数据模型来源时需清空
-                  self.periodID = -1
-                  self.predictPeriodID = -1
-                  for (let c = 0; c < self.backDataListLength; c++) {
-                      self.period.push(self.backDataList['fileNameList'][0][c])
-                      self.predictPeriod.push(self.backDataList['fileNameList'][1][c])
-                  }
-                  console.log("88888888888")
-                  console.log(self.period)
-              }
-                  );
+      var self = this; //解决axios 中 then 内部不能使用Vue的实例化的this 的问题
+      self.period = []    //更换轮播数据模型来源时需清空
+      self.predictPeriod = []    //更换轮播数据模型来源时需清空
+      self.periodID = -1
+      self.predictPeriodID = -1
+      //2023-6-20新增，轮播文件列表获取，即取过去24h
+      let d=new Date()
+      var temp = ['0000','0100','0200','0300','0400','0500',
+                '0600','0700','0800','0900','1000','1100',
+                '1200','1300','1400','1500','1600','1700',
+                '1800','1900','2000','2100','2200','2300']
+      var month = d.getMonth()+1
+      var a = d.getFullYear().toString()+("0" + month).slice(-2).toString()+("0" + (parseInt(d.getDate())-1).toString()).slice(-2).toString()
+      self.backDataListLength = temp.length
+      for (let c = 0; c < self.backDataListLength; c++) {
+             self.period.push(a+temp[c])
+             self.predictPeriod.push((a+temp[c]).slice(0,-2)+'50')
+             }
       },
   /*旧版selectTime()，选择0~11的序号
   selectTime(){

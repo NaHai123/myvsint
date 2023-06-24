@@ -87,13 +87,14 @@
             clearInterval(this.timer);
          }else {
             this.timer = setInterval(
-            ()=>{
+            async ()=>{
             /*
             document.getElementById("memory1").innerHTML = parseInt(document.getElementById("memory1").innerHTML) + (Math.random()-0.5)*0.2
             document.getElementById("memory2").innerHTML = 4.0-parseInt(document.getElementById("memory1").innerHTML)
             document.getElementById("memory3").innerHTML = parseInt(document.getElementById("memory3").innerHTML) + (Math.random()-0.5)*0.2
             document.getElementById("memory4").innerHTML = 4.0-parseInt(document.getElementById("memory3").innerHTML)
             */
+
             let num1 = (1.7 + Math.random()*0.2).toFixed(2)
             let num2 = (4.0 - num1).toFixed(2)
             let num3 = (1.6 + Math.random()*0.2).toFixed(2)
@@ -110,6 +111,9 @@
             document.getElementById("memory7").innerHTML = 43
             document.getElementById("memory8").innerHTML = num5
             //document.getElementById("memory9").innerHTML = 4
+
+
+            await this.getGPUData();
 
             },3000 );  //3000ms刷新一次
          }
@@ -156,30 +160,20 @@
     				console.log(err)
     			})
     		},
-    		getGPUData(){  //2023-3-20新增
-    		     this.$http.post("http://127.0.0.1:8000/gpuData/",
-                {'uid':1,     //0表示取真实数据，1表示取预测数据
-                       },
-                {
-                   headers:{'Content-Type':'application/json'},
-                   emulateJSON:true
-                }).then(
-                   success=>{
-                      //this.backdata=success.data   //本语句无法保存，出 success=>{ } 后backdata变为空，暂未解决
-                      sessionStorage.setItem("GPUState",success.data)  //存在问题：接收后端数据需刷新两次页面
-                   }
-                       );
-                  //后端数据添加进points
-                  this.GPUData = sessionStorage.getItem("GPUState")
-                  this.GPUData = JSON.parse(this.GPUData)
+    		getGPUData(){  //2023-6-20新增
+            this.$http.post("http://101.43.203.170:8080/getServerData",
+           {
+                  },
+           {
+              headers:{'Content-Type':'text/plain;charset=UTF-8'},
+              emulateJSON:true
+           }).then(
+              success=>{
+                             console.log("获取的配置列表为")
+                             console.log(success.data)
 
-
-                  console.log(111111111111111111111111)
-                  if (this.timer){
-                        clearInterval(this.timer);
-                  }else {
-                       this.timer = setInterval( ()=>{this.getGPUData();},3000 );  //5000ms刷新一次
-                  }
+                       }
+                  );
     		},
     	}
     }
