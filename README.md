@@ -1,2 +1,2 @@
-myvisnt：前端主体
+myvsint：前端主体
 mapB：预测雷电地图页面
